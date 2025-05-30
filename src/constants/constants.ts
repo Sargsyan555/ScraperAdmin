@@ -25,7 +25,7 @@ export const SOURCE_URLS = {
   intertrek: 'http://intertrek.info/', //+
   truckdrive: 'https://truckdrive.ru/', //+ //exel
   truckmir: 'https://truckmir.ru/', //-
-  mirdiesel: 'http://mirdiesel.ru/',
+  mirdiesel: 'http://mirdiesel.ru/', //-
   kta50: 'https://kta50.ru/catalog/', //-
   solid: 'https://solid-t.ru/catalog/', //-
   blumaq: 'https://vip.blumaq.com/', //-

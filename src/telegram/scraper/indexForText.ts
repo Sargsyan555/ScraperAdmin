@@ -7,7 +7,7 @@ import { scrapeIstkDeutz } from './sites/istk-deutz'; // done 100% +++++++++++++
 import { scrapeCamsParts } from './sites/camsparts'; // done 100% ++++++++++++++++++
 import { scrapeIMachinery } from './sites/imachinery'; // done 100% ++++++++++++++++++
 import { scrapePcaGroup } from './sites/pcagroup'; // done 100% ++++++++++++++++++
-// import { scrapeRecamgr } from './sites/recamgr'; // done 100% ++++++++++++++++++
+import { scrapeRecamgr } from './sites/recamgr'; // done 100% ++++++++++++++++++
 // import { intertrek } from './sites/intertrek.info'; // done 100% ++++++++++++++++++
 // import { scrapeIxora } from './sites/ixora'; // done 100% ++++++++++++++++++  hamapatasxanox brand chka
 // import { udtTechnika } from './sites/udtTechnika';
@@ -36,9 +36,7 @@ const scrapers: {
   { name: 'Spb.camsparts', fn: scrapeCamsParts, usePuppeteer: false }, // + fast
   { name: 'Pcagroup', fn: scrapePcaGroup, usePuppeteer: false }, // + fast
   { name: 'Imachinery', fn: scrapeIMachinery, usePuppeteer: false }, //+ fast
-  { name: 'Spb.camsparts', fn: scrapeCamsParts, usePuppeteer: false }, // + fast
-  // { name: 'Recamgr', fn: scrapeRecamgr, usePuppeteer: false, exelova: true }, // + fast
-  // { name: 'Voltag', fn: scrapeVoltag, usePuppeteer: false,exelova: true }, // + dandax
+  { name: 'Recamgr', fn: scrapeRecamgr, usePuppeteer: false }, // + fast
   // { name: 'udtTechnika', fn: udtTechnika, usePuppeteer: false ,exelova: true}, // +  dandax
   // { name: 'Dv-Pt', fn: scrapeDvPt, usePuppeteer: false,exelova: true }, // + dandax
   // { name: 'b2b.ixora-auto', fn: scrapeIxora, usePuppeteer: false,exelova: true }, // +
@@ -79,6 +77,7 @@ export async function scrapeAllForText(
 
   for (const scraper of fromExcelScrapers) {
     const res = await scraper.fn([productNames.name]);
+
     fromExcelResults.push(...res);
   }
 
@@ -96,7 +95,6 @@ export async function scrapeAllForText(
     await Promise.all(
       puppeteerScrapers.map(async (scraper) => {
         try {
-          console.log(`🚀 Running Puppeteer scraper: ${scraper.name}`);
           const result = await cluster.execute(async ({ page }) => {
             return scraper.fn([productNames.name], page);
           });
@@ -118,7 +116,6 @@ export async function scrapeAllForText(
   await Promise.all(
     axiosScrapers.map(async (scraper) => {
       try {
-        console.log(`🔍 Running Axios scraper: ${scraper.name}`);
         const result = await scraper.fn([productNames.name]);
         axiosResults.push(...result);
       } catch (err: any) {
@@ -127,13 +124,13 @@ export async function scrapeAllForText(
       }
     }),
   );
-  console.log('axios', start - performance.now());
 
   const allResults = [
     ...puppeteerResults,
     ...axiosResults,
     ...fromExcelResults,
   ];
+  console.log('==', allResults);
 
   return allResults;
 }

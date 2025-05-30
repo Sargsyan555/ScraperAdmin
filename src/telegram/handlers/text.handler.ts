@@ -107,7 +107,6 @@ export class TextHandler {
         );
       }
       ctx.session.step = undefined;
-      console.log(performance.now() - start, '----verjnakan text------');
       await ctx.reply(
         '📄 Отправьте текст или Excel-файл, и мы его обработаем.\n\n' +
           '📌 Также можете отправить вручную в одном из следующих форматов:\n\n' +

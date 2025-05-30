@@ -38,7 +38,7 @@ export async function compareItemTextHandler(
 ): Promise<{ messages: string }> {
   let messages: string = '';
 
-  const concurrencyLimit = 8;
+  const concurrencyLimit = 4;
   let running = 0;
   let index = 0;
   async function runNext() {
@@ -259,7 +259,7 @@ export async function compareItemTextHandler(
         totalPrice = bestPrice.price * Number(inputQty);
       }
 
-       if (bestPrice.price === 0)
+      if (bestPrice.price === 0)
         messages += `❌ ${partNumber}: не найдено ни одной цены`;
       else
         messages += `✅ Кат.номер: ${partNumber} | 🏷️ Цена: ${bestPrice.price}₽ | 🏪 Магазин: "${bestPrice.shopName}" | 💰 Итог: ${totalPrice}₽ | 🏷️ Бренд: ${bestPrice.brand}`;

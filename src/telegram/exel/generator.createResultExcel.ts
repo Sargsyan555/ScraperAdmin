@@ -32,7 +32,6 @@ export function createResultExcelBuffer(rows: ResultRow[]): Buffer {
     'shtern',
     'udtTechnika',
   ];
-  console.log(rows);
 
   const data = rows.map((row) => [
     row.name,
@@ -74,10 +73,23 @@ export function createResultExcelBuffer(rows: ResultRow[]): Buffer {
 
 function formatSuppliers(value: any): string {
   if (Array.isArray(value)) {
-    if (value[0] === '-') {
-      return '';
+    if (value.length === 0) return '';
+    // If array contains objects with price and brand
+    if (typeof value[0] === 'object' && value[0] !== null) {
+      // Map each entry to "brand: price" or just "price" if brand missing
+      return value
+        .map((entry) => {
+          const brand = entry.brand ? `${entry.brand}` : 'NoBrand';
+          const price = entry.price ?? '-';
+          return `${brand}: ${price}₽`;
+        })
+        .join(' || ');
     }
-    if (value[0] && value[1]) return value.join(', ');
+    // If array of primitives like [price, brand] (e.g. for sklad)
+    if (value.length === 2) {
+      return value.join(', ');
+    }
+    return String(value);
   }
   return String(value ?? '');
 }

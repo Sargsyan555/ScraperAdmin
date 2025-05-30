@@ -54,6 +54,7 @@ export class DocumentHandler {
 
       const start = performance.now();
       const { messages, rows } = await compareItems(inputItems, skladItems);
+      console.log('000', rows);
 
       const durationSec = ((performance.now() - start) / 1000).toFixed(2);
       const resultBuffer = createResultExcelBuffer(rows);

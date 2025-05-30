@@ -169,7 +169,6 @@ export class TelegramService {
   //     await ctx.answerCbQuery('Starting to scrape pages...');
 
   //     const urls = await this.crawl.getAllUrls();
-  //     console.log(urls);
 
   //     const { products, filePath } = await this.shtern.scrapeAllCategories();
 
@@ -220,7 +219,7 @@ export class TelegramService {
   //     await ctx.answerCbQuery('Starting to scrape pages...');
 
   //     const filepath = await this.camspart.scrapeAndExport();
-  //     console.log(filepath);
+  //     console.filepath);
 
   //     // await ctx.reply(`✅ Scraped ${products.length} products successfully.`);
 

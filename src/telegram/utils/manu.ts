@@ -17,7 +17,7 @@ export async function getMainMenuKeyboard(
 
   if (isAdmin) {
     buttons.push(
-      [Markup.button.callback('🔍 Запустить Voltag парсинг', 'scrape_seltex')],
+      [Markup.button.callback('🔍 Запустить парсинг', 'scrape_seltex')],
       [Markup.button.callback('➕ Добавить пользователя', 'add_user')],
       [Markup.button.callback('👁️ Видеть пользователя', 'all_users')],
       [Markup.button.callback('❌ Удалить пользователя', 'delete_user')],

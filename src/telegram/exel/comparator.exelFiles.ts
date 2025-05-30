@@ -63,88 +63,29 @@ export async function compareItems(
       resultFromScrap = resultFromScrap.filter(
         (e) => e.price && !isNaN(Number(e.price)) && +e.price,
       );
+
       // Ищем цену на складе
       const skladMatch = skladItems.find((s) => s['кат.номер'] === partNumber);
       const brandSklad = skladMatch?.['название детали'] ?? 'нет бренда';
       const priceSklad = skladMatch?.['цена, RUB'] ?? '-';
 
-      // Инициализируем цены магазинов
-      let seltexPrice: PriceInfo = {
-        brand: '',
-        price: '-',
-        shopName: 'seltex',
-      };
-      let imachineryPrice: PriceInfo = {
-        brand: '',
-        price: '-',
-        shopName: 'imachinery',
-      };
-      let parts74Price: PriceInfo = {
-        brand: '',
-        price: '-',
-        shopName: 'parts74',
-      };
-      let impartPrice: PriceInfo = {
-        brand: '',
-        price: '-',
-        shopName: 'impart',
-      };
-      let pcagroupPrice: PriceInfo = {
-        brand: '',
-        price: '-',
-        shopName: 'pcagroup',
-      };
-      let camspartsPrice: PriceInfo = {
-        brand: '',
-        price: '-',
-        shopName: 'camsparts',
-      };
-      let shtrenPrice: PriceInfo = {
-        brand: '',
-        price: '-',
-        shopName: 'shtern',
-      };
-      let recamgrPrice: PriceInfo = {
-        brand: '',
-        price: '-',
-        shopName: 'recamgr',
-      };
-      let istkiDeutzPrice: PriceInfo = {
-        brand: '',
-        price: '-',
-        shopName: 'istk-deutz',
-      };
-      let intertrekPrice: PriceInfo = {
-        brand: '',
-        price: '-',
-        shopName: 'Intertrek.info',
-      };
-      let ixoraPrice: PriceInfo = {
-        brand: '',
-        price: '-',
-        shopName: 'b2b.ixora-auto',
-      };
-      let udtTechnikaPrice: PriceInfo = {
-        brand: '',
-        price: '-',
-        shopName: 'udtTechnika',
-      };
-      let dvPtPrice: PriceInfo = { brand: '', price: '-', shopName: 'dvpt' };
-      let voltagPrice: PriceInfo = {
-        brand: '',
-        price: '-',
-        shopName: 'voltag',
-      };
-      let mirDieselPrice: PriceInfo = {
-        brand: '',
-        price: '-',
-        shopName: 'mirdiesel',
-      };
-      let truckdrivePrice: PriceInfo = {
-        brand: '',
-        price: '-',
-        shopName: 'truckdrive',
-      };
+      // Инициализируем все цены как массивы, чтобы хранить несколько значений
+      const seltexPrice: PriceInfo[] = [];
+      const imachineryPrice: PriceInfo[] = [];
+      const parts74Price: PriceInfo[] = [];
+      const impartPrice: PriceInfo[] = [];
+      const pcagroupPrice: PriceInfo[] = [];
+      const camspartsPrice: PriceInfo[] = [];
+      const shtrenPrice: PriceInfo[] = [];
+      const recamgrPrice: PriceInfo[] = [];
+      const istkiDeutzPrice: PriceInfo[] = [];
+      const intertrekPrice: PriceInfo[] = [];
+      const ixoraPrice: PriceInfo[] = [];
+      const udtTechnikaPrice: PriceInfo[] = [];
+      const dvPtPrice: PriceInfo[] = [];
+      const voltagPrice: PriceInfo[] = [];
+      const mirDieselPrice: PriceInfo[] = [];
+      const truckdrivePrice: PriceInfo[] = [];
 
       const allPrices: PriceInfo[] = [
         { price: priceSklad, shopName: 'sklad', brand: brandSklad },
@@ -160,72 +101,71 @@ export async function compareItems(
             .replace(/[\s\u00A0]/g, '')
             .replace(/,/g, '.');
           price = Number.isFinite(Number(cleaned)) ? Number(cleaned) : 0;
-          // const shopPriceMutQty = inputQty * price;
           const entry = { price, shopName: shop, brand };
 
           switch (shop) {
             case 'seltex':
-              seltexPrice = entry;
+              seltexPrice.push(entry);
               allPrices.push(entry);
               break;
             case 'imachinery':
-              imachineryPrice = entry;
+              imachineryPrice.push(entry);
               allPrices.push(entry);
               break;
             case 'parts74':
-              parts74Price = entry;
+              parts74Price.push(entry);
               allPrices.push(entry);
               break;
             case 'impart':
-              impartPrice = entry;
+              impartPrice.push(entry);
               allPrices.push(entry);
               break;
             case 'pcagroup':
-              pcagroupPrice = entry;
+              pcagroupPrice.push(entry);
               allPrices.push(entry);
               break;
             case 'camsparts':
-              camspartsPrice = entry;
+              camspartsPrice.push(entry);
               allPrices.push(entry);
               break;
             case 'shtern':
-              shtrenPrice = entry;
+              shtrenPrice.push(entry);
               allPrices.push(entry);
               break;
             case 'recamgr':
-              recamgrPrice = entry;
+              recamgrPrice.push(entry);
               allPrices.push(entry);
               break;
             case 'istk':
-              istkiDeutzPrice = entry;
+              istkiDeutzPrice.push(entry);
               allPrices.push(entry);
               break;
             case 'Intertrek.info':
-              intertrekPrice = entry;
+              intertrekPrice.push(entry);
               allPrices.push(entry);
               break;
             case 'b2b.ixora-auto':
-              ixoraPrice = entry;
+              ixoraPrice.push(entry);
               allPrices.push(entry);
               break;
             case 'udtTechnika':
-              udtTechnikaPrice = entry;
+              udtTechnikaPrice.push(entry);
               allPrices.push(entry);
               break;
             case 'mirdiesel':
-              mirDieselPrice = entry;
+              mirDieselPrice.push(entry);
               allPrices.push(entry);
               break;
             case 'voltag':
-              voltagPrice = entry;
+              voltagPrice.push(entry);
               allPrices.push(entry);
               break;
             case 'dvpt':
-              dvPtPrice = entry;
+              dvPtPrice.push(entry);
               allPrices.push(entry);
               break;
             case 'truckdrive':
-              truckdrivePrice = entry;
+              truckdrivePrice.push(entry);
               allPrices.push(entry);
               break;
             default:
@@ -236,7 +176,7 @@ export async function compareItems(
 
       let bestPrice: PriceInfo = { price: '-', shopName: '', brand: '' };
       let totalPrice = 0;
-      // Выбираем лучшую цену (минимальную > 0
+      // Выбираем лучшую цену (минимальную > 0)
       if (allPrices.length > 0) {
         const sorted: PriceInfo[] = [...allPrices]
           .filter((a) => typeof a.price == 'number')
@@ -256,8 +196,7 @@ export async function compareItems(
         );
       }
 
-      // Формируем строку результата
-
+      // Формируем строку результата, теперь для каждого магазина - массив цен и брендов
       resultRows.push({
         name: partNumber,
         kalichestvo: inputQty,
@@ -265,47 +204,30 @@ export async function compareItems(
         summa: totalPrice,
         luchshiyPostavshik: bestPrice.shopName || '',
         sklad: [priceSklad, brandSklad],
-        // seltex: 0,
-        seltex: [seltexPrice.price, seltexPrice.brand],
-        // imachinery: 0,
-        imachinery: [imachineryPrice.price, imachineryPrice.brand],
-        // '74parts': 0,
-        '74parts': [parts74Price.price, parts74Price.brand],
-        // impart: 0,
-        impart: [impartPrice.price, impartPrice.brand],
-        // pcagroup: 0,
-        pcagroup: [pcagroupPrice.price, pcagroupPrice.brand],
-        // 'spb.camsparts': 0,
-        'spb.camsparts': [camspartsPrice.price, camspartsPrice.brand],
-        // shtern: 0,
-        shtern: [shtrenPrice.price, shtrenPrice.brand],
-        // recamgr: 0,
-        recamgr: [recamgrPrice.price, recamgrPrice.brand],
-        // 'istk-deutz': 0,
-        'istk-deutz': [istkiDeutzPrice.price, istkiDeutzPrice.brand],
-        // intertrek: 0,
-        intertrek: [intertrekPrice.price, intertrekPrice.brand],
-        // 'b2b.ixora-auto': 0,
-        'b2b.ixora-auto': [ixoraPrice.price, ixoraPrice.brand],
-        // "udtTechnika": 0,
-        udtTechnika: [udtTechnikaPrice.price, udtTechnikaPrice.brand],
-        // voltag: 0,
-        voltag: [voltagPrice.price, voltagPrice.brand],
-        // 'dv-pt': 0,
-        dvpt: [dvPtPrice.price, dvPtPrice.brand],
-        // truckdrive: 0,
-        truckdrive: [truckdrivePrice.price, truckdrivePrice.brand],
-        // mirdiesel: 0,
-        mirdiesel: [mirDieselPrice.price, mirDieselPrice.brand],
+        seltex: seltexPrice,
+        imachinery: imachineryPrice,
+        '74parts': parts74Price,
+        impart: impartPrice,
+        pcagroup: pcagroupPrice,
+        'spb.camsparts': camspartsPrice,
+        shtern: shtrenPrice,
+        recamgr: recamgrPrice,
+        'istk-deutz': istkiDeutzPrice,
+        intertrek: intertrekPrice,
+        'b2b.ixora-auto': ixoraPrice,
+        udtTechnika: udtTechnikaPrice,
+        voltag: voltagPrice,
+        dvpt: dvPtPrice,
+        truckdrive: truckdrivePrice,
+        mirdiesel: mirDieselPrice,
         'vip.blumaq': [],
-        // 'vip.blumaq': vipBlumaqPrice.price,
         kta50: [],
         zipteh: [],
         truckmir: [],
         'solid-t': [],
       });
+      console.log(resultRows);
     } catch {
-      // messages.push(`❌ Ошибка при поиске ${partNumber}: ${error.message}`);
       notFound.push(partNumber);
     } finally {
       running--;
