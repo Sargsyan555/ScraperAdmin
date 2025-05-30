@@ -31,8 +31,6 @@ export class TextHandler {
         return;
       }
 
-      console.log('text =', textMessage); // Пример: 1979322 , 1, CAT
-
       const parts = textMessage.split(',').map((part) => part.trim());
 
       let artikul = '';
@@ -72,7 +70,6 @@ export class TextHandler {
       );
 
       const nameItem = normalizeInput(artikul);
-      console.log(nameItem, qty, brand, ' = userna poisk twe');
 
       const checkItem: InputText = { name: nameItem, qty, brand };
 
@@ -80,9 +77,7 @@ export class TextHandler {
         /* ─────────────── изменено: now scrapeAll returns ScrapedProduct[] ─────────────── */
 
         const skladItems = this.stockService.getStock();
-        console.log(
-          skladItems.length > 0 ? 'sklad is done !' : 'sklad dont loaded',
-        );
+
 
         // const { rows } = await compareItems(
         //   [
@@ -98,7 +93,6 @@ export class TextHandler {
           checkItem,
           skladItems,
         );
-        console.log(message, '+++!!!!');
 
         /* ──────────────────────────────────────────────────────────────────────────────── */
         // const msg = formatResults(rows);

@@ -16,11 +16,11 @@ import { scrapeDvPt } from './sites/dv-pt'; //
 import { scrapeVoltag } from './sites/voltag'; //
 import { scrapeTruckdrive } from './sites/truckdrive'; //piti nayvi errora qcum u chisht artikul dnenq toshni chi
 
-import { scrapeShtren } from './sites/shtren'; // done 100% ++++++++++++++++++   miqich dandaxacnuma
+// import { scrapeShtren } from './sites/shtren'; // done 100% ++++++++++++++++++   miqich dandaxacnuma
 import { scrapeTruckmir } from './sites/truckmir'; // dandax
 
 import { scrapeMirDiesel } from './sites/mirdiesel'; // done 100% ++++++++++++++++++
-import { log } from 'node:console';
+import { scrapeShtren } from './sites/shtren';
 
 // Scrapers config
 const scrapers: {
@@ -29,22 +29,33 @@ const scrapers: {
   usePuppeteer?: boolean;
   exelova?: boolean;
 }[] = [
-  // { name: 'Voltag', fn: scrapeVoltag, usePuppeteer: false, exelova: true }, // + dandax
   { name: 'Seltex', fn: scrapeSeltex, exelova: true }, //+ fast
-  // { name: 'Pcagroup', fn: scrapePcaGroup, usePuppeteer: false,exelova: true }, // + fast
-  // { name: 'Imachinery', fn: scrapeIMachinery, usePuppeteer: false,exelova: true }, //+ fast
-  // { name: 'Recamgr', fn: scrapeRecamgr, usePuppeteer: false,exelova: true }, // + fast
-  // { name: 'Spb.camsparts', fn: scrapeCamsParts, usePuppeteer: false,exelova: true }, // + fast
+  { name: 'Voltag', fn: scrapeVoltag, exelova: true }, //+ fast
+  { name: 'Shtren', fn: scrapeShtren, exelova: true }, // + dandax 5000
+  { name: '74Parts', fn: scrape74Parts, exelova: true }, // + dandax
+  { name: 'istk-deutz', fn: scrapeIstkDeutz, exelova: true }, // + dandax // exelova
+  { name: 'Recamgr', fn: scrapeRecamgr, usePuppeteer: false }, // + fast
+  { name: 'Pcagroup', fn: scrapePcaGroup, usePuppeteer: false }, // + fast
+  {
+    name: 'Imachinery',
+    fn: scrapeIMachinery,
+    usePuppeteer: false,
+  }, //+ fast
+  {
+    name: 'Spb.camsparts',
+    fn: scrapeCamsParts,
+    usePuppeteer: false,
+  }, // + fast
   // { name: 'Shtren', fn: scrapeShtren, usePuppeteer: false,exelova: true }, // + dandax 5000
   // { name: 'udtTechnika', fn: udtTechnika, usePuppeteer: false,exelova: true }, // +  dandax
   // { name: '74Parts', fn: scrape74Parts, usePuppeteer: false,exelova: true }, // + dandax
   // { name: 'b2b.ixora-auto', fn: scrapeIxora, usePuppeteer: false,exelova: true }, // +
   // { name: 'Intertrek.info', fn: intertrek, usePuppeteer: false,exelova: true }, // + dandax
-  {
-    name: 'istk-deutz',
-    fn: scrapeIstkDeutz,
-    exelova: true,
-  },
+  // {
+  //   name: 'istk-deutz',
+  //   fn: scrapeIstkDeutz,
+  //   exelova: true,
+  // },
   // { name: 'Truckdrive', fn: scrapeTruckdrive, usePuppeteer: false,exelova: true }, // + dandax
   // { name: 'Impart', fn: scrapeImpart, usePuppeteer: false,exelova: true }, // + dandax
   // { name: 'Truckmir', fn: scrapeTruckmir, usePuppeteer: false,exelova: true }, // shaaaaat dandaxa
@@ -55,11 +66,33 @@ const scrapers: {
 export async function scrapeAll(
   productNames: string[],
 ): Promise<ScrapedProduct[]> {
-  const puppeteerScrapers = scrapers.filter((s) => s.usePuppeteer);
-  const axiosScrapers = scrapers.filter((s) => !s.usePuppeteer);
+  const puppeteerScrapers = scrapers.filter(
+    (s) =>
+      s.usePuppeteer &&
+      s.name !== 'istk-deutz' &&
+      s.name !== '74Parts' &&
+      s.name !== 'Shtren' &&
+      s.name !== 'Seltex' &&
+      s.name !== 'Voltag',
+  );
+  const axiosScrapers = scrapers.filter(
+    (s) =>
+      !s.usePuppeteer &&
+      s.name !== 'istk-deutz' &&
+      s.name !== '74Parts' &&
+      s.name !== 'Shtren' &&
+      s.name !== 'Seltex' &&
+      s.name !== 'Voltag',
+  );
+  const fromExcelScrapers = scrapers.filter((e) => e.exelova === true);
 
   const puppeteerResults: ScrapedProduct[] = [];
   const axiosResults: ScrapedProduct[] = [];
+  const fromExcelResults: ScrapedProduct[] = [];
+  for (const scraper of fromExcelScrapers) {
+    const res = await scraper.fn(productNames);
+    fromExcelResults.push(...res);
+  }
   if (puppeteerScrapers.length) {
     const cluster = await Cluster.launch({
       concurrency: Cluster.CONCURRENCY_PAGE,
@@ -107,8 +140,11 @@ export async function scrapeAll(
   );
   console.log('axios', start - performance.now());
 
-  const allResults = [...puppeteerResults, ...axiosResults];
-
+  const allResults = [
+    ...puppeteerResults,
+    ...axiosResults,
+    ...fromExcelResults,
+  ];
   return allResults;
   // const results = await Promise.all(scrapers.map((s) => s.fn(productNames)));
 

@@ -22,7 +22,7 @@ export function scrapeShtren(
       result.found = true;
       result.name = product.Name || '-';
       result.price = product.Price || '-';
-      result.brand = product.Brand || '-';
+      result.brand = product.Brand || 'нет бренда';
     }
 
     results.push(result);

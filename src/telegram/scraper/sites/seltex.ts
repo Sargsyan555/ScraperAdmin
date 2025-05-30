@@ -23,9 +23,10 @@ export function scrapeSeltex(
       result.name = product.name || '-';
       // Если цена в строке как строка, пробуем преобразовать в число
       result.price = product.price || '-';
-      result.stock = product.stock || '-';
-      result.brand = product.brand || '-';
-      result.stock = product['stock msk'] || product['stock mpb'] || '-';
+      result.brand =
+        product.brand && product.brand?.length > 1
+          ? product.brand
+          : 'нет бренда';
     }
 
     results.push(result);

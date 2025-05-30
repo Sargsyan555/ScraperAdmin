@@ -7,7 +7,6 @@ export class UserHandler {
   constructor(private readonly userService: UsersService) {} // ԱՅՍՏԵՂ ԱՎԵԼԱՑՐԵԼ
   async handle(ctx: Context) {
     const users = await this.userService.getAllUsers();
-    console.log(users, '====');
 
     if (!users.length) {
       await ctx.reply('ℹ️ Пока нет зарегистрированных пользователей.');

@@ -32,6 +32,7 @@ export function createResultExcelBuffer(rows: ResultRow[]): Buffer {
     'shtern',
     'udtTechnika',
   ];
+  console.log(rows);
 
   const data = rows.map((row) => [
     row.name,
@@ -73,7 +74,10 @@ export function createResultExcelBuffer(rows: ResultRow[]): Buffer {
 
 function formatSuppliers(value: any): string {
   if (Array.isArray(value)) {
-    return value.join(', ');
+    if (value[0] === '-') {
+      return '';
+    }
+    if (value[0] && value[1]) return value.join(', ');
   }
   return String(value ?? '');
 }

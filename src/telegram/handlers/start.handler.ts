@@ -10,7 +10,6 @@ export class StartHandler {
   constructor(private readonly userService: UsersService) {}
   async handle(ctx: Context) {
     const telegramUsername = ctx.from?.username;
-    // console.log(telegramUsername);
 
     if (!telegramUsername) {
       await ctx.reply('❌ Не удалось определить ваш Telegram username.');

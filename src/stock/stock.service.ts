@@ -18,11 +18,7 @@ export class StockService implements OnModuleInit {
         'https://disk.yandex.ru/i/FE5LjEWujhR0Xg',
       );
       this.stockStorage.setData(skladItems);
-      console.log(
-        '[StockService] Склад обновлён:',
-        skladItems.length,
-        'позиций',
-      );
+    
     } catch (error) {
       console.error('[StockService] Ошибка обновления склада:', error.message);
     }

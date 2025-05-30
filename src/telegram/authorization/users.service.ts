@@ -42,7 +42,6 @@ export class UsersService {
 
   async isAdmin(telegramUsername: string): Promise<boolean> {
     const user = await this.userModel.findOne({ telegramUsername });
-    console.log('!!!!!', user);
 
     return user?.role === 'admin' || user?.role === 'torossyann1';
   }

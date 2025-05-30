@@ -23,12 +23,28 @@ export function scrape74Parts(
       result.name = product.title || '-';
       // Если цена в строке как строка, пробуем преобразовать в число
       result.price = product.price || '-';
-      result.stock = product.availability || '-';
-      result.brand = product.title || '-';
+      result.brand =
+        (product.title && extractBrand(product.title)) || 'нет бренда';
     }
 
     results.push(result);
   }
 
   return Promise.resolve(results);
+}
+function extractBrand(text: string): string {
+  // Match all uppercase words (including commas and spaces between)
+  const upperWords = text.match(/\b[A-Z0-9]+(?:\s+[A-Z0-9]+)*\b/g);
+
+  if (!upperWords || upperWords.length === 0) {
+    return ''; // No uppercase words found
+  }
+
+  if (upperWords.length === 1) {
+    return upperWords[0]; // Only one brand
+  }
+
+  // Multiple uppercase words, return the last two joined with comma
+  const lastTwo = upperWords.slice(-2).join(', ');
+  return lastTwo;
 }

@@ -23,12 +23,16 @@ export function scrapeIstkDeutz(
       result.name = product.title || '-';
       // Если цена в строке как строка, пробуем преобразовать в число
       result.price = product.price || '-';
-      result.stock = product.stock || '-';
-      result.brand = product.title || '-';
+      result.brand =
+        (product.title && extractBrand(product.title)) || 'нет бренда';
     }
 
     results.push(result);
   }
 
   return Promise.resolve(results);
+}
+function extractBrand(text: string): string {
+  const match = text.match(/[A-Z]+/g);
+  return match ? match.join(' ') : '';
 }

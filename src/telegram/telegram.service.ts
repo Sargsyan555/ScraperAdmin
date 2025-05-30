@@ -42,7 +42,7 @@ export class TelegramService {
     private readonly documentHandler: DocumentHandler,
     private readonly userHandler: UserHandler,
     private readonly scraperService: ScraperService,
-    // // private readonly voltagService: VoltagService,
+    private readonly voltagService: VoltagService,
     private readonly truckdriveService: TruckdriveService,
     private readonly shtern: ProductScraperService,
     private readonly usersService: UsersService, // ✅ inject it
@@ -81,7 +81,6 @@ export class TelegramService {
 
     // if (ctx.session.step === 'scrape_seltex') {
     //   await ctx.sendChatAction('typing');
-    //   console.log('fnd');
 
     //   await ctx.reply('⌛ Пожалуйста, подождите, идет обработка...');
     //   await this.textHandler.handle(ctx);
@@ -141,18 +140,17 @@ export class TelegramService {
     try {
       await ctx.answerCbQuery('Starting to scrape pages...');
 
-      const urls = await this.crawl.getAllUrls();
-      // console.log(urls);
-
-      // const { products, filePath } = await this.shtern.scrapeAllCategories();
-
-      // await ctx.reply(`✅ Scraped ${products.length} products successfully.`);
-
-      // ✅ Send the Excel file
-      // await ctx.replyWithDocument({
-      //   source: filePath,
-      //   filename: 'seltex-products.xlsx',
-      // });
+      // Kick off scraping (your worker-based scrapeAllCategories)
+      const { filePath } = await this.udtTexnika.scrapeAndExport();
+      if (filePath) {
+        await ctx.reply(`✅ Scraped  products successfully.`);
+        await ctx.replyWithDocument({
+          source: filePath,
+          filename: 'seltex-products.xlsx',
+        });
+      } else {
+        console.log('path isnt');
+      }
     } catch (error) {
       console.error('Error during scraping:', error.message);
 
@@ -163,6 +161,34 @@ export class TelegramService {
       }
     }
   }
+
+  // }
+  // @Action('scrape_seltex')
+  // async onScrapPages(@Ctx() ctx: Context) {
+  //   try {
+  //     await ctx.answerCbQuery('Starting to scrape pages...');
+
+  //     const urls = await this.crawl.getAllUrls();
+  //     console.log(urls);
+
+  //     const { products, filePath } = await this.shtern.scrapeAllCategories();
+
+  //     await ctx.reply(`✅ Scraped ${products.length} products successfully.`);
+
+  //     await ctx.replyWithDocument({
+  //       source: filePath,
+  //       filename: 'seltex-products.xlsx',
+  //     });
+  //   } catch (error) {
+  //     console.error('Error during scraping:', error.message);
+
+  //     try {
+  //       await ctx.reply('❌ An error occurred during scraping.');
+  //     } catch (e) {
+  //       console.error('Failed to send reply:', e.message);
+  //     }
+  //   }
+  // }
   // @Action('scrape_seltex')
   // async onScrapPages(@Ctx() ctx: Context) {
   //   try {

@@ -10,20 +10,20 @@ export const BRANDS = [
 ];
 export const SOURCE_URLS = {
   seltex: 'https://www.seltex.ru/catalog/', //+ //exel
+  voltag: 'https://voltag.ru/', //+ //exel
+  shtern: 'https://xn--e1aqig3a.com/', //+ //exel
+  parts74: 'https://74parts.ru/catalog/?q=', // + // exel
+  istk: 'https://istk-deutz.ru/', // + //exel
   pcagroup: 'https://pcagroup.ru/search/?search=', // + //exel
   recamgr: 'https://recamgr.ru/products/?search=', //+ //exel
   imachinery: 'https://imachinery.ru/search/?q=', //+ //exel
   camsparts: 'https://spb.camsparts.ru/katalog-cummins/?search=', //+ // exel
   udtTechnika: 'https://www.udt-technika.ru/', //exel
-  parts74: 'https://74parts.ru/catalog/?q=', // + // exel
   impart: 'https://impart.online/catalog/search/?q=', //+
   ixora: 'https://b2b.ixora-auto.ru/', //+
-  shtern: 'https://xn--e1aqig3a.com/', //+ //exel
-  voltag: 'https://voltag.ru/', //+ //exel
   dvpt: 'https://dv-pt.ru/', //+ // exel
   intertrek: 'http://intertrek.info/', //+
   truckdrive: 'https://truckdrive.ru/', //+ //exel
-  istk: 'https://istk-deutz.ru/', // + //exel
   truckmir: 'https://truckmir.ru/', //-
   mirdiesel: 'http://mirdiesel.ru/',
   kta50: 'https://kta50.ru/catalog/', //-

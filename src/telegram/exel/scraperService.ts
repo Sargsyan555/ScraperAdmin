@@ -18,7 +18,6 @@ export class ScraperService {
   private readonly baseUrl = 'https://www.seltex.ru';
 
   async scrapeCatalog(): Promise<void> {
-    console.log('sksvav');
 
     const catalogUrl = `${this.baseUrl}/catalog`;
     try {

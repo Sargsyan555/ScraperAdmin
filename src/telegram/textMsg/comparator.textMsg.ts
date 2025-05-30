@@ -38,7 +38,7 @@ export async function compareItemTextHandler(
 ): Promise<{ messages: string }> {
   let messages: string = '';
 
-  const concurrencyLimit = 4;
+  const concurrencyLimit = 8;
   let running = 0;
   let index = 0;
   async function runNext() {
@@ -47,7 +47,6 @@ export async function compareItemTextHandler(
     const partNumber = inputItem.name;
     const inputQty = inputItem.qty || '';
     const brand = inputItem.brand || '';
-    // console.log(partNumber, inputQty, 'stexa');
 
     if (!partNumber) return runNext();
 
@@ -58,7 +57,6 @@ export async function compareItemTextHandler(
       const resultFromScrap = await runScrapeWorker(inputItem);
 
       const skladMatch = skladItems.find((s) => s['кат.номер'] === partNumber);
-      console.log('poiska tve brand = ', brand);
 
       let brandMatch: string | undefined;
       if (brand) {
@@ -246,7 +244,6 @@ export async function compareItemTextHandler(
           }
         },
       );
-      console.log('!!!!!++++', allPrices);
 
       let bestPrice: PriceInfo = { price: 0, shopName: '', brand: '' };
       let totalPrice: any = 0;
@@ -262,12 +259,7 @@ export async function compareItemTextHandler(
         totalPrice = bestPrice.price * Number(inputQty);
       }
 
-      console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-      console.log('result for Text Handler  = ', resultFromScrap);
-      console.log('all Shops = ', allPrices);
-      console.log('Best !!!!!!!!!!!!!!!!!!!!', bestPrice);
-
-      if (bestPrice.price === 0)
+       if (bestPrice.price === 0)
         messages += `❌ ${partNumber}: не найдено ни одной цены`;
       else
         messages += `✅ Кат.номер: ${partNumber} | 🏷️ Цена: ${bestPrice.price}₽ | 🏪 Магазин: "${bestPrice.shopName}" | 💰 Итог: ${totalPrice}₽ | 🏷️ Бренд: ${bestPrice.brand}`;
