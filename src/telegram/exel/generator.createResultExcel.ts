@@ -1,19 +1,17 @@
 import * as XLSX from 'xlsx';
-import { ResultRow } from './exel.types';
-
+import { ResultRowTest } from './exel.types';
+import * as fs from 'fs';
+import * as path from 'path';
 /** Build an Excel workbook entirely in memory and return it as a Buffer. */
-export function createResultExcelBuffer(rows: ResultRow[]): Buffer {
+export function createResultExcelBuffer(rows: ResultRowTest[]): string {
   const headers = [
     'кат.номер',
     'кол-во',
     'лучшая цена',
     'сумма',
     'лучший поставщик',
-    'склад',
     'seltex',
     'imachinery',
-    'impart',
-    'zipteh',
     '74parts',
     'b2b.ixora-auto',
     'vip.blumaq',
@@ -22,53 +20,47 @@ export function createResultExcelBuffer(rows: ResultRow[]): Buffer {
     'spb.camsparts',
     'voltag',
     'dv-pt',
-    'recamgr',
-    'intertrek',
-    'kta50',
-    'truckdrive',
-    'truckmir',
     'istk-deutz',
-    'mirdiesel',
     'shtern',
     'udtTechnika',
   ];
 
-  const data = rows.map((row) => [
-    row.name,
-    row.kalichestvo,
-    row.luchshayaCena,
-    row.summa,
-    row.luchshiyPostavshik,
-    formatSuppliers(row.sklad),
-    formatSuppliers(row.seltex),
-    formatSuppliers(row.imachinery),
-    formatSuppliers(row.impart),
-    formatSuppliers(row.zipteh),
-    formatSuppliers(row['74parts']),
-    formatSuppliers(row['b2b.ixora-auto']),
-    formatSuppliers(row['vip.blumaq']),
-    formatSuppliers(row['solid-t']),
-    formatSuppliers(row.pcagroup),
-    formatSuppliers(row['spb.camsparts']),
-    formatSuppliers(row.voltag),
-    formatSuppliers(row['dv-pt']),
-    formatSuppliers(row.recamgr),
-    formatSuppliers(row.intertrek),
-    formatSuppliers(row.kta50),
-    formatSuppliers(row.truckdrive),
-    formatSuppliers(row.truckmir),
-    formatSuppliers(row['istk-deutz']),
-    formatSuppliers(row.mirdiesel),
-    formatSuppliers(row.shtern),
-    formatSuppliers(row.udtTechnika),
-  ]);
-
-  const worksheet = XLSX.utils.aoa_to_sheet([headers, ...data]);
+  const data = rows.map((row) => {
+    return [
+      row.name,
+      row.kalichestvo,
+      row.luchshayaCena,
+      row.summa,
+      row.luchshiyPostavshik,
+      formatSuppliers(row.seltex),
+      formatSuppliers(row.imachinery),
+      formatSuppliers(row['74parts']),
+      formatSuppliers(row['b2b.ixora-auto']),
+      formatSuppliers(row['vip.blumaq']),
+      formatSuppliers(row['solid-t']),
+      formatSuppliers(row.pcagroup),
+      formatSuppliers(row['spb.camsparts']),
+      formatSuppliers(row.voltag),
+      formatSuppliers(row['dv-pt']),
+      formatSuppliers(row['istk-deutz']),
+      formatSuppliers(row.shtern),
+      formatSuppliers(row.udtTechnika),
+    ];
+  });
+  const sheetData = [headers, ...data];
+  const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
   const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Result');
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
 
-  /** XLSX.write(..., { type: 'buffer' }) → Node.js Buffer with valid .xlsx bytes */
-  return XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' }) as Buffer;
+  const outputDir = path.join(__dirname, '..', '..', 'exports');
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir);
+  }
+
+  const filePath = path.join(outputDir, `report-${Date.now()}.xlsx`);
+  XLSX.writeFile(workbook, filePath);
+
+  return filePath;
 }
 
 function formatSuppliers(value: any): string {

@@ -41,3 +41,20 @@ export type ResultRow = {
   shtern: any[];
   udtTechnika: any[];
 };
+export type ResultRowTest = {
+  name: string;
+  kalichestvo: number;
+  luchshayaCena: number | string;
+  summa: number;
+  luchshiyPostavshik: string | undefined;
+  '74parts': any[];
+  pcagroup: any[];
+  'spb.camsparts': any[];
+  dvpt: any[];
+  'istk-deutz': any[];
+  shtern: any[];
+  voltag: any[];
+  udtTechnika: any[];
+  seltex: any[];
+  imachinery: any[];
+};

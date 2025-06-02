@@ -78,7 +78,6 @@ export class TextHandler {
 
         const skladItems = this.stockService.getStock();
 
-
         // const { rows } = await compareItems(
         //   [
         //     {
@@ -187,38 +186,3 @@ export class TextHandler {
     }
   }
 }
-
-// util/format-result.ts
-// function formatResults(results: ResultRow[]): string {
-//   if (!results.length) {
-//     return '❌ Ничего не найдено.';
-//   }
-
-//   const row = results[0]; // обрабатываем только первую строку
-
-//   const excludeKeys = [
-//     'name',
-//     'kalichestvo',
-//     'luchshayaCena',
-//     'summa',
-//     'luchshiyPostavshik',
-//   ];
-
-//   const prices: { shop: string; price: number }[] = Object.entries(row)
-//     .filter(
-//       ([key, value]) =>
-//         !excludeKeys.includes(key) && typeof value === 'number' && value > 0,
-//     )
-//     .map(([shop, price]) => ({
-//       shop,
-//       price: Number(price), // Явное преобразование к числу
-//     }));
-
-//   if (!prices.length) {
-//     return '❌ Цены не найдены.';
-//   }
-
-//   const best = prices.reduce((min, cur) => (cur.price < min.price ? cur : min));
-
-//   return `✅ *Лучшая цена найдена!*\n\n🏬 Магазин: *${best.shop}*\n🔧 Деталь: _${row.name}_\n💰 Цена: *${best.price}*`;
-// }

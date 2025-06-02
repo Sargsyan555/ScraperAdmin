@@ -22,6 +22,8 @@ import { ScraperImachineryService } from './exel/imachinery';
 import { ScraperPcaGroupService } from './exel/pcagroup';
 import { ScraperCamspartService } from './exel/camsarts';
 import { CrawlerService } from './exel/intertrek';
+import { SeltexService } from './cache/seltex.service';
+import { ExcelCacheLoaderService } from './cache/cache.service';
 
 @Module({
   imports: [
@@ -54,6 +56,8 @@ import { CrawlerService } from './exel/intertrek';
     ScraperPcaGroupService,
     ScraperCamspartService,
     CrawlerService,
+    SeltexService,
+    ExcelCacheLoaderService,
   ],
 })
 export class TelegramModule {}

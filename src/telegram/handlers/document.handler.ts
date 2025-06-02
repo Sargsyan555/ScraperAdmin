@@ -4,17 +4,44 @@ import { Message } from 'telegraf/typings/core/types/typegram';
 import { parseExcelFromTelegram } from '../exel/parse.and.read';
 import { compareItems } from '../exel/comparator.exelFiles';
 import { createResultExcelBuffer } from '../exel/generator.createResultExcel';
-import { InputExelFile, ParsedRow } from '../exel/exel.types';
+import {
+  InputExelFile,
+  ParsedRow,
+  ResultRow,
+  ResultRowTest,
+} from '../exel/exel.types';
 import { getMainMenuKeyboard } from '../utils/manu';
 import { UsersService } from '../authorization/users.service';
 import { StockService } from 'src/stock/stock.service';
-
+import { ExcelCacheLoaderService } from '../cache/cache.service';
+import { normalizeInput } from '../utils/validator';
+import { getLowestPriceProduct } from '../telegram.service';
+import { udtTechnika } from '../scraper/sites/udtTechnika';
+type ExcelData = {
+  Seltex: Record<string, ProductData[]>;
+  SeventyFour: Record<string, ProductData[]>;
+  IstkDeutz: Record<string, ProductData[]>;
+  Voltag: Record<string, ProductData[]>;
+  Shtren: Record<string, ProductData[]>;
+  UdtTexnika: Record<string, ProductData[]>;
+  Camspart: Record<string, ProductData[]>;
+  Dvpt: Record<string, ProductData[]>;
+  Pcagroup: Record<string, ProductData[]>;
+  Imachinery: Record<string, ProductData[]>;
+};
+type ProductData = {
+  title: string;
+  price: number;
+  stock?: string | number;
+  brand?: string;
+};
 @Injectable()
 export class DocumentHandler {
   // stockService: ParsedRow[];
   constructor(
     private readonly userService: UsersService,
     private readonly stockService: StockService,
+    private readonly excelCacheLoaderService: ExcelCacheLoaderService,
   ) {}
 
   async handle(ctx: Context) {
@@ -37,6 +64,7 @@ export class DocumentHandler {
         document.file_id,
         ctx.telegram,
       );
+      const start = performance.now();
 
       if (!inputItems.length) {
         return ctx.reply('Ваш файл Excel пустой.');
@@ -51,21 +79,73 @@ export class DocumentHandler {
       await ctx.reply(
         '🌐 Идёт поиск по сайтам поставщиков. Пожалуйста, подождите...',
       );
+      const finalResult: ResultRowTest[] = [];
+      console.log(inputItems);
+      inputItems.forEach((element: InputExelFile) => {
+        let article = element['кат.номер'];
+        const qtyStr = element['кол-во'] || 1;
+        // let brand = '';
 
-      const start = performance.now();
-      const { messages, rows } = await compareItems(inputItems, skladItems);
-      console.log('000', rows);
+        // await ctx.reply(
+        //   '🔄 Запрос принят! Ищем информацию, пожалуйста, подождите...',
+        // );
+        article = normalizeInput(article);
+
+        const data: ExcelData = this.excelCacheLoaderService.getExcelData();
+
+        let combinedDataBySource: Record<keyof ExcelData, ProductData[]> = {
+          Seltex: data.Seltex[article] || [],
+          SeventyFour: data.SeventyFour[article] || [],
+          IstkDeutz: data.IstkDeutz[article] || [],
+          Voltag: data.Voltag[article] || [],
+          Shtren: data.Shtren[article] || [],
+          UdtTexnika: data.UdtTexnika[article] || [],
+          Camspart: data.Camspart[article] || [],
+          Dvpt: data.Dvpt[article] || [],
+          Pcagroup: data.Pcagroup[article] || [],
+          Imachinery: data.Imachinery[article] || [],
+        };
+        combinedDataBySource = filterValidPriceProducts(combinedDataBySource);
+        const best = getLowestPriceProduct(combinedDataBySource);
+        const lowestPrice = best ? best.product.price : 0;
+        const total = lowestPrice * qtyStr;
+        finalResult.push({
+          name: article,
+          kalichestvo: qtyStr,
+          luchshayaCena: lowestPrice,
+          summa: total,
+          luchshiyPostavshik: best?.shop,
+          '74parts': combinedDataBySource.SeventyFour,
+          pcagroup: combinedDataBySource.Pcagroup,
+          'spb.camsparts': combinedDataBySource.Camspart,
+          shtern: combinedDataBySource.Shtren,
+          'istk-deutz': combinedDataBySource.IstkDeutz,
+          dvpt: combinedDataBySource.Dvpt,
+          voltag: combinedDataBySource.Voltag,
+          udtTechnika: combinedDataBySource.UdtTexnika,
+          seltex: combinedDataBySource.Seltex,
+          imachinery: combinedDataBySource.Imachinery,
+        });
+      });
+      console.log(finalResult);
+      const filePath = createResultExcelBuffer(finalResult);
+      await ctx.replyWithDocument({
+        source: filePath,
+        filename: 'seltex-products.xlsx',
+      });
+      // const { messages, rows } = await compareItems(inputItems, skladItems);
+      // console.log('000', rows);
 
       const durationSec = ((performance.now() - start) / 1000).toFixed(2);
-      const resultBuffer = createResultExcelBuffer(rows);
+      // const resultBuffer = createResultExcelBuffer(rows);
       await ctx.reply(`⏱ Операция заняла ${durationSec} секунд.`);
 
       // for (const msg of messages) await ctx.reply(msg);
 
-      await ctx.replyWithDocument({
-        source: resultBuffer,
-        filename: 'result.xlsx',
-      });
+      // await ctx.replyWithDocument({
+      //   // source: resultBuffer,
+      //   // filename: 'result.xlsx',
+      // });
 
       ctx.session.step = undefined;
       const x = await getMainMenuKeyboard(
@@ -83,4 +163,30 @@ export class DocumentHandler {
       await ctx.reply('❌ Не удалось обработать файл.');
     }
   }
+}
+function filterValidPriceProducts(
+  dataBySource: Record<keyof ExcelData, ProductData[]>,
+): Record<keyof ExcelData, ProductData[]> {
+  const result = {} as Record<keyof ExcelData, ProductData[]>;
+
+  for (const source in dataBySource) {
+    const products = dataBySource[source as keyof ExcelData];
+
+    result[source as keyof ExcelData] = products
+      .map((product) => {
+        const rawPrice: number = product.price;
+
+        if (rawPrice > 0) {
+          return {
+            ...product,
+            price: rawPrice, // ✅ store the cleaned number
+          };
+        }
+
+        return null;
+      })
+      .filter((p): p is ProductData => p !== null);
+  }
+
+  return result;
 }

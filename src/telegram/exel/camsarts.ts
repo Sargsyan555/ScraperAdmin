@@ -19,7 +19,6 @@ export class ScraperCamspartService {
   private sitemapUrl = 'https://spb.camsparts.ru/sitemap.xml';
 
   async scrapeAndExport(): Promise<string> {
-
     // Step 1: Get all product URLs from sitemap
     const productUrls = await this.getProductUrlsFromSitemap(this.sitemapUrl);
     const filtered = productUrls.filter((url) => {
@@ -41,9 +40,8 @@ export class ScraperCamspartService {
     for (const url of filtered) {
       count++;
 
-      if (count > 100) {
-        break;
-      }
+      console.log(url, count);
+
       try {
         const product = await this.getProductData(url);
         if (product) {
