@@ -1,4 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
+import { readExcelFromYandexDisk } from 'src/stock/readExcelFromYandexDisk';
 import * as XLSX from 'xlsx';
 
 type ProductData = {
@@ -80,6 +81,7 @@ type IstkDeutzRow = {
 //   Brand?: string;
 // };
 type ExcelDataMap = {
+  Sklad: Record<string, ProductData[]>;
   Seltex: Record<string, ProductData[]>;
   SeventyFour: Record<string, ProductData[]>;
   IstkDeutz: Record<string, ProductData[]>;
@@ -95,6 +97,7 @@ type ExcelDataMap = {
 @Injectable()
 export class ExcelCacheLoaderService implements OnModuleInit {
   private data: ExcelDataMap = {
+    Sklad: {},
     Seltex: {},
     SeventyFour: {},
     IstkDeutz: {},
@@ -108,6 +111,7 @@ export class ExcelCacheLoaderService implements OnModuleInit {
   };
 
   onModuleInit() {
+    this.loadSklad();
     this.loadSeltex();
     this.loadSeventyFour();
     this.loadIstkDeutz();
@@ -120,6 +124,35 @@ export class ExcelCacheLoaderService implements OnModuleInit {
     this.loadImachinery();
     console.log('✅ All Excel data loaded and cached.');
   }
+  private async loadSklad() {
+    const skladItems = await readExcelFromYandexDisk(
+      'https://disk.yandex.ru/i/FE5LjEWujhR0Xg',
+    );
+
+    for (const row of skladItems) {
+      if (!row['кат.номер']) continue;
+      const key = row['кат.номер'].trim();
+
+      const priceValue = row['цена, RUB'] as string | number;
+
+      const product: ProductData = {
+        title: row['название детали'] || '-',
+        price:
+          typeof priceValue === 'string'
+            ? parseInt(priceValue.replace(/[^\d]/g, ''), 10) || 0
+            : priceValue || 0,
+      };
+
+      if (!this.data.Sklad[key]) {
+        this.data.Sklad[key] = [];
+      }
+
+      this.data.Sklad[key].push(product);
+    }
+
+    console.log(this.data.Sklad, '✅ Sklad loaded');
+  }
+
   private loadShtren() {
     const workbook = XLSX.readFile('src/telegram/scraper/shtren.xlsx');
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -360,7 +393,7 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       this.data.Dvpt[key].push(product);
     }
 
-    console.log('✅ Camspart loaded');
+    console.log('✅ DvPt loaded');
   }
   private loadPcagroup() {
     const workbook = XLSX.readFile('src/telegram/scraper/pcagroup.xlsx');
@@ -425,7 +458,7 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       this.data.Imachinery[key].push(product);
     }
 
-    console.log('✅ Pcagroup loaded');
+    console.log('✅ Imachery loaded');
   }
   public getExcelData(): ExcelDataMap {
     return this.data;

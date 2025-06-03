@@ -31,6 +31,7 @@ type ProductData = {
 };
 
 type ExcelData = {
+  Sklad: Record<string, ProductData[]>;
   Seltex: Record<string, ProductData[]>;
   SeventyFour: Record<string, ProductData[]>;
   IstkDeutz: Record<string, ProductData[]>;
@@ -140,6 +141,7 @@ export class TelegramService {
       const data: ExcelData = this.excelCacheLoaderService.getExcelData();
 
       const combinedDataBySource: Record<keyof ExcelData, ProductData[]> = {
+        Sklad: data.Sklad[article] || [],
         Seltex: data.Seltex[article] || [],
         SeventyFour: data.SeventyFour[article] || [],
         IstkDeutz: data.IstkDeutz[article] || [],
@@ -195,6 +197,7 @@ export class TelegramService {
 
       for (const shop in validPriceData) {
         const products = validPriceData[shop as keyof ExcelData];
+        console.log(products, 'shop = ', shop);
 
         products.forEach((p) => {
           if (p.price > 0) {

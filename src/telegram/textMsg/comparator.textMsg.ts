@@ -284,5 +284,6 @@ export async function compareItemTextHandler(
   await Promise.all(runners);
   // await runNext();
   // messages = messages ? messages : 'не найдено ни одной цены';
+
   return { messages };
 }

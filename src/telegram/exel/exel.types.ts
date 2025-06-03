@@ -47,6 +47,7 @@ export type ResultRowTest = {
   luchshayaCena: number | string;
   summa: number;
   luchshiyPostavshik: string | undefined;
+  sklad: any[];
   '74parts': any[];
   pcagroup: any[];
   'spb.camsparts': any[];

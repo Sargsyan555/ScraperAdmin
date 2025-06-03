@@ -30,7 +30,7 @@ import { ExcelCacheLoaderService } from './cache/cache.service';
     StockModule,
     TelegrafModule.forRootAsync({
       useFactory: () => ({
-        token: '7630393603:AAHVgFXYaTVFdO462YdeOaQInRzBTfmAEVg',
+        token: '7559322394:AAHHLZ08o2aK7wD6gctr5RTtDEvdrsFx0HU',
         middlewares: [session()],
       }),
     }),
