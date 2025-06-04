@@ -48,6 +48,8 @@ export type ResultRowTest = {
   summa: number;
   luchshiyPostavshik: string | undefined;
   sklad: any[];
+  seltex: any[];
+  'solid-t': any[];
   '74parts': any[];
   pcagroup: any[];
   'spb.camsparts': any[];
@@ -56,6 +58,5 @@ export type ResultRowTest = {
   shtern: any[];
   voltag: any[];
   udtTechnika: any[];
-  seltex: any[];
   imachinery: any[];
 };

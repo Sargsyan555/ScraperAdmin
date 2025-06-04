@@ -14,7 +14,6 @@ export const SOURCE_URLS = {
   shtern: 'https://xn--e1aqig3a.com/', //+ //exel
   parts74: 'https://74parts.ru/catalog/?q=', // + // exel
   istk: 'https://istk-deutz.ru/', // + //exel
-
   pcagroup: 'https://pcagroup.ru/search/?search=', // + //exel
   recamgr: 'https://recamgr.ru/products/?search=', //+ //exel
   camsparts: 'https://spb.camsparts.ru/katalog-cummins/?search=', //+ // exel
@@ -22,18 +21,17 @@ export const SOURCE_URLS = {
   udtTechnika: 'https://www.udt-technika.ru/', //exel
   imachinery: 'https://imachinery.ru/search/?q=', //+ //exel
 
-  intertrek: 'http://intertrek.info/', //+
+  solid: 'https://solid-t.ru/catalog/', //- //empty site
+  mirdiesel: 'http://mirdiesel.ru/', //- empty site
+  kta50: 'https://kta50.ru/catalog/', //- chi bacum
+  blumaq: 'https://vip.blumaq.com/', //- need registration
+  zipteh: 'https://zipteh.online/', //- need registration
 
-  truckdrive: 'https://truckdrive.ru/', //+ //exel
+  truckdrive: 'https://truckdrive.ru/', //+
+  intertrek: 'http://intertrek.info/', //+
   impart: 'https://impart.online/catalog/search/?q=', //+
   ixora: 'https://b2b.ixora-auto.ru/', //+
-  truckmir: 'https://truckmir.ru/', //-
-
-  solid: 'https://solid-t.ru/catalog/', //- //datark
-  mirdiesel: 'http://mirdiesel.ru/', //- datark
-  kta50: 'https://kta50.ru/catalog/', //- chi bacum
-  blumaq: 'https://vip.blumaq.com/', //- grancum
-  zipteh: 'https://zipteh.online/', //- grancum
+  truckmir: 'https://truckmir.ru/', // +
 };
 export const BASICS = {
   empotyString: '',

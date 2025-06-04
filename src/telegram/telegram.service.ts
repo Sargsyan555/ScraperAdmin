@@ -32,6 +32,7 @@ type ProductData = {
 
 type ExcelData = {
   Sklad: Record<string, ProductData[]>;
+  Solid: Record<string, ProductData[]>;
   Seltex: Record<string, ProductData[]>;
   SeventyFour: Record<string, ProductData[]>;
   IstkDeutz: Record<string, ProductData[]>;
@@ -131,7 +132,6 @@ export class TelegramService {
       await ctx.reply(
         '🔄 Запрос принят! Ищем информацию, пожалуйста, подождите...',
       );
-
       const articul = normalizeInput(artikul);
 
       await ctx.reply(
@@ -142,6 +142,7 @@ export class TelegramService {
 
       const combinedDataBySource: Record<keyof ExcelData, ProductData[]> = {
         Sklad: data.Sklad[article] || [],
+        Solid: data.Solid[article] || [],
         Seltex: data.Seltex[article] || [],
         SeventyFour: data.SeventyFour[article] || [],
         IstkDeutz: data.IstkDeutz[article] || [],
@@ -197,7 +198,6 @@ export class TelegramService {
 
       for (const shop in validPriceData) {
         const products = validPriceData[shop as keyof ExcelData];
-        console.log(products, 'shop = ', shop);
 
         products.forEach((p) => {
           if (p.price > 0) {

@@ -19,6 +19,7 @@ import { getLowestPriceProduct } from '../telegram.service';
 import { udtTechnika } from '../scraper/sites/udtTechnika';
 type ExcelData = {
   Sklad: Record<string, ProductData[]>;
+  Solid: Record<string, ProductData[]>;
   Seltex: Record<string, ProductData[]>;
   SeventyFour: Record<string, ProductData[]>;
   IstkDeutz: Record<string, ProductData[]>;
@@ -96,6 +97,7 @@ export class DocumentHandler {
 
         let combinedDataBySource: Record<keyof ExcelData, ProductData[]> = {
           Sklad: data.Sklad[article] || [],
+          Solid: data.Solid[article] || [],
           Seltex: data.Seltex[article] || [],
           SeventyFour: data.SeventyFour[article] || [],
           IstkDeutz: data.IstkDeutz[article] || [],
@@ -108,8 +110,6 @@ export class DocumentHandler {
           Imachinery: data.Imachinery[article] || [],
         };
 
-        console.log(combinedDataBySource, 'hly asa tenam ');
-
         combinedDataBySource = filterValidPriceProducts(combinedDataBySource);
         const best = getLowestPriceProduct(combinedDataBySource);
         const lowestPrice = best ? best.product.price : 0;
@@ -121,6 +121,7 @@ export class DocumentHandler {
           summa: total,
           luchshiyPostavshik: best?.shop,
           sklad: combinedDataBySource.Sklad,
+          'solid-t': combinedDataBySource.Solid,
           '74parts': combinedDataBySource.SeventyFour,
           pcagroup: combinedDataBySource.Pcagroup,
           'spb.camsparts': combinedDataBySource.Camspart,

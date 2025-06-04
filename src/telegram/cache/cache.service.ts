@@ -25,12 +25,21 @@ type SeltexRow = {
   'stock mpb'?: string;
 };
 
+type SolidRow = {
+  Article: string;
+  Name: string;
+  Price: string;
+  Brand: string;
+  availability: string;
+};
+
 type SeventyFourRow = {
   article?: string;
   title?: string;
   price?: number | string;
   availability?: string | number;
 };
+
 type IstkDeutzRow = {
   articul?: string;
   title?: string;
@@ -83,6 +92,7 @@ type IstkDeutzRow = {
 type ExcelDataMap = {
   Sklad: Record<string, ProductData[]>;
   Seltex: Record<string, ProductData[]>;
+  Solid: Record<string, ProductData[]>;
   SeventyFour: Record<string, ProductData[]>;
   IstkDeutz: Record<string, ProductData[]>;
   Voltag: Record<string, ProductData[]>;
@@ -98,6 +108,7 @@ type ExcelDataMap = {
 export class ExcelCacheLoaderService implements OnModuleInit {
   private data: ExcelDataMap = {
     Sklad: {},
+    Solid: {},
     Seltex: {},
     SeventyFour: {},
     IstkDeutz: {},
@@ -112,6 +123,7 @@ export class ExcelCacheLoaderService implements OnModuleInit {
 
   onModuleInit() {
     this.loadSklad();
+    this.loadSolid();
     this.loadSeltex();
     this.loadSeventyFour();
     this.loadIstkDeutz();
@@ -150,7 +162,33 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       this.data.Sklad[key].push(product);
     }
 
-    console.log(this.data.Sklad, '✅ Sklad loaded');
+    console.log('✅ Sklad loaded');
+  }
+
+  private loadSolid() {
+    const workbook = XLSX.readFile('src/telegram/scraper/solid.xlsx');
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows: SolidRow[] = XLSX.utils.sheet_to_json(sheet);
+
+    for (const row of rows) {
+      const key = row.Article?.trim();
+      if (!key) continue;
+
+      const product: ProductData = {
+        title: row.Name || '-',
+        price:
+          typeof row.Price === 'string'
+            ? parseInt(row.Price.replace(/[^\d]/g, ''), 10) || 0
+            : row.Price || 0,
+        stock: row.availability || '-',
+        brand: row.Brand || '-',
+      };
+
+      if (!this.data.Solid[key]) this.data.Solid[key] = [];
+      this.data.Solid[key].push(product);
+    }
+
+    console.log(this.data.Solid, '✅ Solid loaded');
   }
 
   private loadShtren() {
