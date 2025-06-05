@@ -3,7 +3,9 @@ import { TelegramModule } from './telegram/telegram.module';
 import * as dotenv from 'dotenv';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './telegram/authorization/schema/schema';
-
+import { ScheduleModule } from '@nestjs/schedule';
+import { ScraperServiceSeltex } from './telegram/exel/scraperServiceSeltex';
+import { ScraperServiceShtren } from './telegram/exel/scraperServiceShtern';
 dotenv.config();
 
 @Module({
@@ -13,8 +15,10 @@ dotenv.config();
     ),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     TelegramModule,
+    // ScheduleModule.forRoot(), // <-- Enable scheduling globally
   ],
   controllers: [],
+  // providers: [ScraperServiceSeltex, ScraperServiceShtren],
   providers: [],
 })
 export class AppModule {}

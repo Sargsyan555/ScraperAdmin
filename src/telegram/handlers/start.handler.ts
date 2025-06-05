@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { Context } from 'src/types/context.interface';
 import { getMainMenuKeyboard } from '../utils/manu';
 import { UsersService } from '../authorization/users.service';
-import { ScraperService } from '../exel/scraperService';
+// import { ScraperService } from '../exel/scraperServiceSeltex';
 @Injectable()
 export class StartHandler {
   private readonly templateLink = process.env.YANDEX_LINK || '';
-  private readonly scraperService: ScraperService;
+  // private readonly scraperService: ScraperService;
   constructor(private readonly userService: UsersService) {}
+
   async handle(ctx: Context) {
     const telegramUsername = ctx.from?.username;
 

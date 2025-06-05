@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Context } from 'src/types/context.interface';
 import { Message } from 'telegraf/typings/core/types/typegram';
 import { parseExcelFromTelegram } from '../exel/parse.and.read';
-import { compareItems } from '../exel/comparator.exelFiles';
 import { createResultExcelBuffer } from '../exel/generator.createResultExcel';
 import {
   InputExelFile,
@@ -72,11 +71,11 @@ export class DocumentHandler {
         return ctx.reply('Ваш файл Excel пустой.');
       }
 
-      const skladItems: ParsedRow[] = this.stockService.getStock();
+      // const skladItems: ParsedRow[] = this.stockService.getStock();
 
-      console.log(
-        skladItems.length > 0 ? 'sklad is done !' : 'sklad dont loaded',
-      );
+      // console.log(
+      //   skladItems.length > 0 ? 'sklad is done !' : 'sklad dont loaded',
+      // );
 
       await ctx.reply(
         '🌐 Идёт поиск по сайтам поставщиков. Пожалуйста, подождите...',
@@ -138,7 +137,7 @@ export class DocumentHandler {
       const filePath = createResultExcelBuffer(finalResult);
       await ctx.replyWithDocument({
         source: filePath,
-        filename: 'seltex-products.xlsx',
+        filename: 'result.xlsx',
       });
       // const { messages, rows } = await compareItems(inputItems, skladItems);
       // console.log('000', rows);

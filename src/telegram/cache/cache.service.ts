@@ -188,7 +188,7 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       this.data.Solid[key].push(product);
     }
 
-    console.log(this.data.Solid, '✅ Solid loaded');
+    console.log('✅ Solid loaded');
   }
 
   private loadShtren() {

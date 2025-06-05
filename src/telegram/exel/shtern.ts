@@ -20,8 +20,6 @@ export class ProductScraperService {
   ];
 
   async scrapeAllCategories() {
-    console.log('stexa');
-
     const promises = this.categories.map((categoryUrl) => {
       console.log(categoryUrl);
       return this.runWorker(categoryUrl);

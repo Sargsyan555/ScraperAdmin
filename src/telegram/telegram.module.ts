@@ -12,7 +12,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './authorization/schema/schema';
 import { UserHandler } from './handlers/user.handleer';
 import { StockModule } from 'src/stock/stock.module';
-import { ScraperService } from './exel/scraperService';
+import { ScraperServiceSeltex } from './exel/scraperServiceSeltex';
 import { VoltagService } from './exel/voltag';
 import { TruckdriveService } from './exel/truckdrive';
 import { ProductScraperService } from './exel/shtern';
@@ -47,7 +47,7 @@ import { ExcelCacheLoaderService } from './cache/cache.service';
     UserHandler,
     UsersService,
     VoltagService,
-    ScraperService,
+    ScraperServiceSeltex,
     TruckdriveService,
     ProductScraperService,
     ScraperServiceUdt,
