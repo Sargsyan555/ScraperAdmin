@@ -11,7 +11,6 @@ import { UsersService } from './authorization/users.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './authorization/schema/schema';
 import { UserHandler } from './handlers/user.handleer';
-import { StockModule } from 'src/stock/stock.module';
 import { ExcelCacheLoaderService } from './cache/cache.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ScraperServiceUdtTechnika } from './exel/ScraperServiceUdtTechnika';
@@ -25,15 +24,11 @@ import { ScraperServiceShtren } from './exel/scraperServiceShtern';
 import { ScraperServicePcagroup } from './exel/scraperServicePcagroup';
 import { ScraperRecamgrService } from './exel/ScraperRecamgrService';
 import { ScraperServiceZipteh } from './exel/ScraperServiceZipteh';
-<<<<<<< HEAD
-import { ScraperServiceIxora } from './exel/ScraperServiceIxora';
-=======
 import { ScraperSolidService } from './exel/scraperServiceSolid';
->>>>>>> e377a3df371bdb0cbf6c89a7032d5abb70f280ff
 
 @Module({
   imports: [
-    StockModule,
+    // StockModule,
     TelegrafModule.forRootAsync({
       useFactory: () => ({
         token: '7559322394:AAHHLZ08o2aK7wD6gctr5RTtDEvdrsFx0HU',
@@ -45,7 +40,6 @@ import { ScraperSolidService } from './exel/scraperServiceSolid';
     ScheduleModule.forRoot(),
   ],
   providers: [
-    StockModule,
     TelegramService,
     StartHandler,
     HelpHandler,
@@ -67,12 +61,8 @@ import { ScraperSolidService } from './exel/scraperServiceSolid';
     // ScraperService74Parts, // -- chilnum xuyewo xi
     // ScraperServiceShtren, //++ done
     // ScraperServiceVoltag, //++ done
-<<<<<<< HEAD
-    // ScraperServiceSeltex, //++ done
-=======
-    ScraperSolidService,
+    // ScraperSolidService, //++done
     // ScraperRecamgrService,
->>>>>>> e377a3df371bdb0cbf6c89a7032d5abb70f280ff
   ],
 })
 export class TelegramModule {}

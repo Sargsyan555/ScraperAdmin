@@ -3,19 +3,12 @@ import { Context } from 'src/types/context.interface';
 import { Message } from 'telegraf/typings/core/types/typegram';
 import { parseExcelFromTelegram } from '../exel/parse.and.read';
 import { createResultExcelBuffer } from '../exel/generator.createResultExcel';
-import {
-  InputExelFile,
-  ParsedRow,
-  ResultRow,
-  ResultRowTest,
-} from '../exel/exel.types';
+import { InputExelFile, ResultRowTest } from '../exel/exel.types';
 import { getMainMenuKeyboard } from '../utils/manu';
 import { UsersService } from '../authorization/users.service';
-import { StockService } from 'src/stock/stock.service';
 import { ExcelCacheLoaderService } from '../cache/cache.service';
 import { normalizeInput } from '../utils/validator';
 import { getLowestPriceProduct } from '../telegram.service';
-import { udtTechnika } from '../scraper/sites/udtTechnika';
 type ExcelData = {
   Sklad: Record<string, ProductData[]>;
   Solid: Record<string, ProductData[]>;
@@ -30,6 +23,8 @@ type ExcelData = {
   Pcagroup: Record<string, ProductData[]>;
   Imachinery: Record<string, ProductData[]>;
   Zipteh: Record<string, ProductData[]>;
+  Ixora: Record<string, ProductData[]>;
+  Recamgr: Record<string, ProductData[]>;
 };
 type ProductData = {
   title: string;
@@ -42,7 +37,7 @@ export class DocumentHandler {
   // stockService: ParsedRow[];
   constructor(
     private readonly userService: UsersService,
-    private readonly stockService: StockService,
+
     private readonly excelCacheLoaderService: ExcelCacheLoaderService,
   ) {}
 
@@ -109,6 +104,8 @@ export class DocumentHandler {
           Pcagroup: data.Pcagroup[article] || [],
           Imachinery: data.Imachinery[article] || [],
           Zipteh: data.Zipteh[article] || [],
+          Ixora: data.Ixora[article] || [],
+          Recamgr: data.Recamgr[article] || [],
         };
 
         combinedDataBySource = filterValidPriceProducts(combinedDataBySource);
@@ -134,6 +131,8 @@ export class DocumentHandler {
           seltex: combinedDataBySource.Seltex,
           imachinery: combinedDataBySource.Imachinery,
           zipteh: combinedDataBySource.Zipteh,
+          ixora: combinedDataBySource.Ixora,
+          recamgr: combinedDataBySource.Recamgr,
         });
       });
       console.log(finalResult);

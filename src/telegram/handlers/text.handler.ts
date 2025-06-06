@@ -4,7 +4,7 @@ import { Context } from 'src/types/context.interface';
 import { Message } from 'telegraf/typings/core/types/typegram';
 import { getMainMenuKeyboard } from '../utils/manu';
 import { UsersService } from '../authorization/users.service';
-import { StockService } from 'src/stock/stock.service';
+// import { StockService } from 'src/stock/stock.service';
 // import { ResultRow } from '../exel/exel.types';
 // import { compareItems } from '../exel/comparator.exelFiles';
 import { normalizeInput } from '../utils/validator';
@@ -17,7 +17,7 @@ import {
 export class TextHandler {
   constructor(
     private readonly usersService: UsersService,
-    private readonly stockService: StockService,
+    // private readonly stockService: StockService,
   ) {}
 
   async handle(ctx: Context) {
@@ -76,7 +76,7 @@ export class TextHandler {
       try {
         /* ─────────────── изменено: now scrapeAll returns ScrapedProduct[] ─────────────── */
 
-        const skladItems = this.stockService.getStock();
+        // const skladItems = this.stockService.getStock();
 
         // const { rows } = await compareItems(
         //   [
@@ -88,15 +88,15 @@ export class TextHandler {
         //   skladItems,
         // );
 
-        const { messages } = await compareItemTextHandler(
-          checkItem,
-          skladItems,
-        );
+        // const { messages } = await compareItemTextHandler(
+        //   checkItem,
+        //   skladItems,
+        // );
 
         /* ──────────────────────────────────────────────────────────────────────────────── */
         // const msg = formatResults(rows);
 
-        await ctx.reply(messages);
+        // await ctx.reply(messages);
         const durationSec = ((performance.now() - start) / 1000).toFixed(2);
         await ctx.reply(`⏱ Операция заняла ${durationSec} секунд.`);
       } catch (error) {

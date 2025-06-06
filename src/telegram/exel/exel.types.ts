@@ -60,4 +60,6 @@ export type ResultRowTest = {
   udtTechnika: any[];
   imachinery: any[];
   zipteh: any[];
+  ixora: any[];
+  recamgr: any[];
 };

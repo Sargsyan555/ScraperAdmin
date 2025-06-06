@@ -43,6 +43,8 @@ type ExcelData = {
   Pcagroup: Record<string, ProductData[]>;
   Imachinery: Record<string, ProductData[]>;
   Zipteh: Record<string, ProductData[]>;
+  Recamgr: Record<string, ProductData[]>;
+  Ixora: Record<string, ProductData[]>;
 };
 @Injectable()
 @Update()
@@ -153,7 +155,10 @@ export class TelegramService {
         Pcagroup: data.Pcagroup[article] || [],
         Imachinery: data.Imachinery[article] || [],
         Zipteh: data.Zipteh[article] || [],
+        Ixora: data.Ixora[article] || [],
+        Recamgr: data.Recamgr[article] || [],
       };
+
       const validPriceData = filterValidPriceProducts(combinedDataBySource);
 
       // const { matchedBrand, notMatchedBrand } =

@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { readExcelFromYandexDisk } from 'src/stock/readExcelFromYandexDisk';
+import { readExcelFromYandexDisk } from 'src/telegram/utils/readExcelFromYandexDisk';
 import * as XLSX from 'xlsx';
 
 type ProductData = {
@@ -8,6 +8,7 @@ type ProductData = {
   stock?: string | number;
   brand?: string;
   articul?: string;
+  artikul?: string;
 };
 type UdtRow = {
   Артикул?: string;
@@ -104,6 +105,8 @@ export type ExcelDataMap = {
   Pcagroup: Record<string, ProductData[]>;
   Imachinery: Record<string, ProductData[]>;
   Zipteh: Record<string, ProductData[]>;
+  Ixora: Record<string, ProductData[]>;
+  Recamgr: Record<string, ProductData[]>;
 };
 
 @Injectable()
@@ -122,6 +125,8 @@ export class ExcelCacheLoaderService implements OnModuleInit {
     Pcagroup: {},
     Imachinery: {},
     Zipteh: {},
+    Ixora: {},
+    Recamgr: {},
   };
 
   onModuleInit() {
@@ -138,8 +143,12 @@ export class ExcelCacheLoaderService implements OnModuleInit {
     this.loadPcagroup();
     this.loadImachinery();
     this.loadZipteh();
+    this.loadIxora();
+    this.loadRecamgr();
+
     console.log('✅ All Excel data loaded and cached.');
   }
+
   private async loadSklad() {
     const skladItems = await readExcelFromYandexDisk(
       'https://disk.yandex.ru/i/FE5LjEWujhR0Xg',
@@ -166,7 +175,61 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       this.data.Sklad[key].push(product);
     }
 
-    console.log('✅ Sklad loaded');
+    console.log(' ✅ Sklad loaded');
+  }
+
+  private loadRecamgr() {
+    const workbook = XLSX.readFile('src/telegram/scraper/RecamgrPrice.xlsx');
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows: ProductData[] = XLSX.utils.sheet_to_json(sheet);
+
+    for (const row of rows) {
+      const key = row.articul?.trim();
+      if (!key) continue;
+
+      const priceValue = row.price as string | number;
+
+      const product: ProductData = {
+        title: row.title || '-',
+        price:
+          typeof priceValue === 'string'
+            ? parseInt(priceValue.replace(/[^\d]/g, ''), 10) || 0
+            : priceValue || 0,
+        brand: row.brand || '-',
+      };
+
+      if (!this.data.Recamgr[key]) this.data.Recamgr[key] = [];
+      this.data.Recamgr[key].push(product);
+    }
+
+    console.log('✅ RecamgrPrice loaded');
+  }
+
+  private loadIxora() {
+    const workbook = XLSX.readFile('src/telegram/scraper/ixora.xlsx');
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows: ProductData[] = XLSX.utils.sheet_to_json(sheet);
+
+    for (const row of rows) {
+      const key = row.artikul?.trim();
+      if (!key) continue;
+
+      const priceValue = row.price as string | number;
+
+      const product: ProductData = {
+        title: row.title || '-',
+        price:
+          typeof priceValue === 'string'
+            ? parseInt(priceValue.replace(/[^\d]/g, ''), 10) || 0
+            : priceValue || 0,
+        brand: row.brand || '-',
+      };
+
+      if (!this.data.Ixora[key]) this.data.Ixora[key] = [];
+      this.data.Ixora[key].push(product);
+    }
+
+    console.log('✅ Ixora loaded');
   }
 
   private loadZipteh() {
@@ -178,18 +241,24 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       const key = row.articul?.trim();
       if (!key) continue;
 
+      const priceValue = row.price as string | number;
+
       const product: ProductData = {
         title: row.title || '-',
-        price: row.price || 0,
+        price:
+          typeof priceValue === 'string'
+            ? parseInt(priceValue.replace(/[^\d]/g, ''), 10) || 0
+            : priceValue || 0,
         brand: row.brand || '-',
       };
 
-      if (!this.data.Solid[key]) this.data.Solid[key] = [];
-      this.data.Solid[key].push(product);
+      if (!this.data.Zipteh[key]) this.data.Zipteh[key] = [];
+      this.data.Zipteh[key].push(product);
     }
 
-    console.log('✅ Solid loaded');
+    console.log('✅ Zipteh loaded');
   }
+
   private loadSolid() {
     const workbook = XLSX.readFile('src/telegram/scraper/solid.xlsx');
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
