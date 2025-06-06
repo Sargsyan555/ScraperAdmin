@@ -23,8 +23,9 @@ import { ScraperCamspartService } from './exel/scraperServiceCamsarts';
 import { ScraperServiceSeltex } from './exel/scraperServiceSeltex';
 import { ScraperServiceShtren } from './exel/scraperServiceShtern';
 import { ScraperServicePcagroup } from './exel/scraperServicePcagroup';
-import { ScraperRecamgrService } from './exel/recamgr';
+import { ScraperRecamgrService } from './exel/ScraperRecamgrService';
 import { ScraperServiceZipteh } from './exel/ScraperServiceZipteh';
+import { ScraperSolidService } from './exel/scraperServiceSolid';
 
 @Module({
   imports: [
@@ -62,6 +63,8 @@ import { ScraperServiceZipteh } from './exel/ScraperServiceZipteh';
     // ScraperServicePcagroup, //++ done
     // ScraperServiceUdtTechnika, //++ done
     // ScraperServiceVoltag, //++ done
+    ScraperSolidService,
+    // ScraperRecamgrService,
   ],
 })
 export class TelegramModule {}

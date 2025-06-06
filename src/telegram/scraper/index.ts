@@ -17,7 +17,7 @@ import { scrapeVoltag } from './sites/voltag'; //
 import { scrapeTruckdrive } from './sites/truckdrive'; //piti nayvi errora qcum u chisht artikul dnenq toshni chi
 
 // import { scrapeShtren } from './sites/shtren'; // done 100% ++++++++++++++++++   miqich dandaxacnuma
-import { scrapeTruckmir } from './sites/truckmir'; // dandax
+// import { scrapeTruckmir } from './sites/truckmir'; // dandax
 
 import { scrapeMirDiesel } from './sites/mirdiesel'; // done 100% ++++++++++++++++++
 import { scrapeShtren } from './sites/shtren';
