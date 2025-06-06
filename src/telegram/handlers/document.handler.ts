@@ -29,6 +29,7 @@ type ExcelData = {
   Dvpt: Record<string, ProductData[]>;
   Pcagroup: Record<string, ProductData[]>;
   Imachinery: Record<string, ProductData[]>;
+  Zipteh: Record<string, ProductData[]>;
 };
 type ProductData = {
   title: string;
@@ -107,6 +108,7 @@ export class DocumentHandler {
           Dvpt: data.Dvpt[article] || [],
           Pcagroup: data.Pcagroup[article] || [],
           Imachinery: data.Imachinery[article] || [],
+          Zipteh: data.Zipteh[article] || [],
         };
 
         combinedDataBySource = filterValidPriceProducts(combinedDataBySource);
@@ -131,6 +133,7 @@ export class DocumentHandler {
           udtTechnika: combinedDataBySource.UdtTexnika,
           seltex: combinedDataBySource.Seltex,
           imachinery: combinedDataBySource.Imachinery,
+          zipteh: combinedDataBySource.Zipteh,
         });
       });
       console.log(finalResult);

@@ -42,6 +42,7 @@ type ExcelData = {
   Dvpt: Record<string, ProductData[]>;
   Pcagroup: Record<string, ProductData[]>;
   Imachinery: Record<string, ProductData[]>;
+  Zipteh: Record<string, ProductData[]>;
 };
 @Injectable()
 @Update()
@@ -151,6 +152,7 @@ export class TelegramService {
         Dvpt: data.Dvpt[article] || [],
         Pcagroup: data.Pcagroup[article] || [],
         Imachinery: data.Imachinery[article] || [],
+        Zipteh: data.Zipteh[article] || [],
       };
       const validPriceData = filterValidPriceProducts(combinedDataBySource);
 

@@ -7,6 +7,7 @@ type ProductData = {
   price: number;
   stock?: string | number;
   brand?: string;
+  articul?: string;
 };
 type UdtRow = {
   Артикул?: string;
@@ -89,10 +90,10 @@ type IstkDeutzRow = {
 //   Price: string | number;
 //   Brand?: string;
 // };
-type ExcelDataMap = {
+export type ExcelDataMap = {
   Sklad: Record<string, ProductData[]>;
-  Seltex: Record<string, ProductData[]>;
   Solid: Record<string, ProductData[]>;
+  Seltex: Record<string, ProductData[]>;
   SeventyFour: Record<string, ProductData[]>;
   IstkDeutz: Record<string, ProductData[]>;
   Voltag: Record<string, ProductData[]>;
@@ -102,6 +103,7 @@ type ExcelDataMap = {
   Dvpt: Record<string, ProductData[]>;
   Pcagroup: Record<string, ProductData[]>;
   Imachinery: Record<string, ProductData[]>;
+  Zipteh: Record<string, ProductData[]>;
 };
 
 @Injectable()
@@ -119,6 +121,7 @@ export class ExcelCacheLoaderService implements OnModuleInit {
     Dvpt: {},
     Pcagroup: {},
     Imachinery: {},
+    Zipteh: {},
   };
 
   onModuleInit() {
@@ -134,6 +137,7 @@ export class ExcelCacheLoaderService implements OnModuleInit {
     this.loadDvpt();
     this.loadPcagroup();
     this.loadImachinery();
+    this.loadZipteh();
     console.log('✅ All Excel data loaded and cached.');
   }
   private async loadSklad() {
@@ -165,6 +169,27 @@ export class ExcelCacheLoaderService implements OnModuleInit {
     console.log('✅ Sklad loaded');
   }
 
+  private loadZipteh() {
+    const workbook = XLSX.readFile('src/telegram/scraper/zipteh.xlsx');
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows: ProductData[] = XLSX.utils.sheet_to_json(sheet);
+
+    for (const row of rows) {
+      const key = row.articul?.trim();
+      if (!key) continue;
+
+      const product: ProductData = {
+        title: row.title || '-',
+        price: row.price || 0,
+        brand: row.brand || '-',
+      };
+
+      if (!this.data.Solid[key]) this.data.Solid[key] = [];
+      this.data.Solid[key].push(product);
+    }
+
+    console.log('✅ Solid loaded');
+  }
   private loadSolid() {
     const workbook = XLSX.readFile('src/telegram/scraper/solid.xlsx');
     const sheet = workbook.Sheets[workbook.SheetNames[0]];

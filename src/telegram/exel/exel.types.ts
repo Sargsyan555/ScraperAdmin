@@ -59,4 +59,5 @@ export type ResultRowTest = {
   voltag: any[];
   udtTechnika: any[];
   imachinery: any[];
+  zipteh: any[];
 };
