@@ -21,7 +21,6 @@ import { createReadStream, existsSync } from 'fs';
 import { join } from 'path';
 import { ExcelCacheLoaderService } from './cache/cache.service';
 import { normalizeInput } from './utils/validator';
-import { ScraperCamspartService } from './exel/camsarts';
 
 type ProductData = {
   title: string;
@@ -55,7 +54,6 @@ export class TelegramService {
     private readonly documentHandler: DocumentHandler,
     private readonly userHandler: UserHandler,
     private readonly usersService: UsersService, // ✅ inject it
-    private readonly camspart: ScraperCamspartService,
     private readonly excelCacheLoaderService: ExcelCacheLoaderService,
   ) {}
   @Start()
@@ -261,31 +259,31 @@ export class TelegramService {
     await ctx.reply('Пожалуйста, введите Username(James123)  пользователя.');
   }
 
-  @Action('scrape_seltex')
-  async onScrapPages(@Ctx() ctx: Context) {
-    try {
-      await ctx.answerCbQuery('Starting to scrape pages...');
+  // @Action('scrape_seltex')
+  // async onScrapPages(@Ctx() ctx: Context) {
+  //   try {
+  //     await ctx.answerCbQuery('Starting to scrape pages...');
 
-      const filepath = await this.camspart.scrapeAndExport();
-      console.log(filepath);
+  //     const filepath = await this.camspart.scrapeAndExport();
+  //     console.log(filepath);
 
-      // await ctx.reply(`✅ Scraped ${products.length} products successfully.`);
+  //     // await ctx.reply(`✅ Scraped ${products.length} products successfully.`);
 
-      // ✅ Send the Excel file
-      await ctx.replyWithDocument({
-        source: filepath,
-        // filename: 'seltex-products.xlsx',
-      });
-    } catch (error) {
-      console.error('Error during scraping:', error.message);
+  //     // ✅ Send the Excel file
+  //     await ctx.replyWithDocument({
+  //       source: filepath,
+  //       // filename: 'seltex-products.xlsx',
+  //     });
+  //   } catch (error) {
+  //     console.error('Error during scraping:', error.message);
 
-      try {
-        await ctx.reply('❌ An error occurred during scraping.');
-      } catch (e) {
-        console.error('Failed to send reply:', e.message);
-      }
-    }
-  }
+  //     try {
+  //       await ctx.reply('❌ An error occurred during scraping.');
+  //     } catch (e) {
+  //       console.error('Failed to send reply:', e.message);
+  //     }
+  //   }
+  // }
   @Action('all_users')
   async onAllUsers(@Ctx() ctx: Context) {
     await this.userHandler.handle(ctx);

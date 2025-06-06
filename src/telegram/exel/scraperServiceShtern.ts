@@ -36,6 +36,12 @@ export class ScraperServiceShtren {
     }
   }
 
+  constructor() {
+    this.scrapeAllCategories().catch((err) =>
+      this.logger.error('Initial download failed:', err),
+    );
+  }
+
   async scrapeAllCategories() {
     this.logger.log('📦 Starting scraping of all categories...');
     try {

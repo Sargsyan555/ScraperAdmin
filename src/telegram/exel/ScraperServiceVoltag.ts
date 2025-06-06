@@ -1,10 +1,10 @@
-// voltag.service.ts
-import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { parseStringPromise } from 'xml2js';
-import * as xlsx from 'xlsx';
-import * as fs from 'fs';
 import * as path from 'path';
+import * as fs from 'fs';
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import * as XLSX from 'xlsx';
+import { parseStringPromise } from 'xml2js';
 import { Worker } from 'worker_threads';
 
 interface Product {
@@ -17,13 +17,36 @@ interface Product {
 }
 
 @Injectable()
-export class VoltagService {
-  async scrapeAllProducts(): Promise<string | undefined> {
+export class ScraperServiceVoltag {
+  private readonly logger = new Logger(ScraperServiceVoltag.name);
+  private readonly sitemapUrl = 'https://voltag.ru/sitemap.xml';
+  private readonly outputDir = path.join(
+    process.cwd(),
+    '/src/telegram/scraper',
+  );
+
+  constructor() {
+    this.scrapeAndSave().catch((err) =>
+      this.logger.error('Initial scraping failed:', err),
+    );
+  }
+
+  @Cron(CronExpression.EVERY_3_HOURS)
+  async handleCron() {
+    this.logger.log('Running scheduled scraping...');
     try {
-      // 1. Get all sitemap group URLs
-      const { data: sitemapXml } = await axios.get(
-        'https://voltag.ru/sitemap.xml',
-      );
+      await this.scrapeAndSave();
+      this.logger.log('Scraping completed successfully.');
+    } catch (error) {
+      this.logger.error('Scheduled scraping failed:', error);
+    }
+  }
+
+  private async scrapeAndSave(): Promise<void> {
+    this.logger.log(`Fetching sitemap: ${this.sitemapUrl}`);
+
+    try {
+      const { data: sitemapXml } = await axios.get(this.sitemapUrl);
       const sitemapIndex = (await parseStringPromise(sitemapXml)) as {
         sitemapindex: { sitemap: { loc: string[] }[] };
       };
@@ -50,9 +73,8 @@ export class VoltagService {
         url.replace('/catalog/group/', '/price/group/'),
       );
 
-      // 2. Split into 5 chunks and assign to workers
       const chunks = this.chunkArray(allPriceUrls, 5);
-      const results: Product[] = [];
+      const allProducts: Product[] = [];
 
       const workerPromises = chunks.map((chunk) => {
         return new Promise<Product[]>((resolve, reject) => {
@@ -69,16 +91,14 @@ export class VoltagService {
         });
       });
 
-      const workerResults = await Promise.all(workerPromises);
-      for (const res of workerResults) {
-        results.push(...res);
+      const results = await Promise.all(workerPromises);
+      for (const products of results) {
+        allProducts.push(...products);
       }
 
-      // 3. Save to Excel
-      return this.saveToExcel(results);
+      this.saveToExcel(allProducts);
     } catch (err) {
-      console.error('Error in main scraping thread:', err);
-      return undefined;
+      this.logger.error('Error during scraping:', err.message || err);
     }
   }
 
@@ -91,21 +111,22 @@ export class VoltagService {
     return result;
   }
 
-  private saveToExcel(data: Product[]): string | undefined {
-    if (!data.length) return;
-
-    const worksheet = xlsx.utils.json_to_sheet(data);
-    const workbook = xlsx.utils.book_new();
-    xlsx.utils.book_append_sheet(workbook, worksheet, 'Products');
-
-    const dir = path.join(__dirname, '..', 'excels');
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+  private saveToExcel(data: Product[]): void {
+    if (!data.length) {
+      this.logger.warn('No data to save to Excel.');
+      return;
     }
 
-    const filePath = path.join(dir, 'products.xlsx');
-    xlsx.writeFile(workbook, filePath);
-    console.log(`✅ Excel written to ${filePath}`);
-    return filePath;
+    const sheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, sheet, 'VoltagProducts');
+
+    if (!fs.existsSync(this.outputDir)) {
+      fs.mkdirSync(this.outputDir, { recursive: true });
+    }
+
+    const filePath = path.join(this.outputDir, 'VoltagPrice.xlsx');
+    XLSX.writeFile(workbook, filePath);
+    this.logger.log(`✅ Excel saved: ${filePath}`);
   }
 }

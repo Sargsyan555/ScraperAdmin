@@ -12,18 +12,18 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './authorization/schema/schema';
 import { UserHandler } from './handlers/user.handleer';
 import { StockModule } from 'src/stock/stock.module';
-import { ScraperServiceSeltex } from './exel/scraperServiceSeltex';
-import { VoltagService } from './exel/voltag';
-import { TruckdriveService } from './exel/truckdrive';
-import { ProductScraperService } from './exel/shtern';
-import { ScraperServiceUdt } from './exel/udtTexnika';
-import { ScraperRecamgrService } from './exel/recamgr';
-import { ScraperImachineryService } from './exel/imachinery';
-import { ScraperPcaGroupService } from './exel/pcagroup';
-import { ScraperCamspartService } from './exel/camsarts';
-import { CrawlerService } from './exel/intertrek';
-import { SeltexService } from './cache/seltex.service';
 import { ExcelCacheLoaderService } from './cache/cache.service';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ScraperServiceUdtTechnika } from './exel/ScraperServiceUdtTechnika';
+import { ScraperServiceVoltag } from './exel/ScraperServiceVoltag';
+import { ScraperServiceDvPt } from './exel/scraperServiceDv-Pt';
+import { ScraperImachineryService } from './exel/ScraperServiceImachinery';
+import { ScraperServiceIstkDeutz } from './exel/ScraperService-Isdk';
+import { ScraperCamspartService } from './exel/scraperServiceCamsarts';
+import { ScraperServiceSeltex } from './exel/scraperServiceSeltex';
+import { ScraperServiceShtren } from './exel/scraperServiceShtern';
+import { ScraperServicePcagroup } from './exel/scraperServicePcagroup';
+import { ScraperRecamgrService } from './exel/recamgr';
 
 @Module({
   imports: [
@@ -36,6 +36,7 @@ import { ExcelCacheLoaderService } from './cache/cache.service';
     }),
     HttpModule,
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]), // ✅
+    ScheduleModule.forRoot(),
   ],
   providers: [
     StockModule,
@@ -46,18 +47,19 @@ import { ExcelCacheLoaderService } from './cache/cache.service';
     DocumentHandler,
     UserHandler,
     UsersService,
-    VoltagService,
-    ScraperServiceSeltex,
-    TruckdriveService,
-    ProductScraperService,
-    ScraperServiceUdt,
-    ScraperRecamgrService,
-    ScraperImachineryService,
-    ScraperPcaGroupService,
-    ScraperCamspartService,
-    CrawlerService,
-    SeltexService,
     ExcelCacheLoaderService,
+    // ScraperRecamgrService, // chilnum  interestik.info
+    // StockService, // slkadna mnace
+    // ScraperService74Parts, // -- chilnum xuyewo xi
+    ScraperServiceIstkDeutz, // ++done
+    ScraperServiceDvPt, // ++done
+    ScraperCamspartService, //++ done
+    ScraperServiceSeltex, //++ done
+    ScraperServiceShtren, //++ done
+    ScraperImachineryService, //++ done
+    ScraperServicePcagroup, //++ done
+    ScraperServiceUdtTechnika, //++ done
+    ScraperServiceVoltag, //++ done
   ],
 })
 export class TelegramModule {}
