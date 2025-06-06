@@ -28,21 +28,21 @@ const scrapers: {
   usePuppeteer?: boolean;
   exelova?: boolean;
 }[] = [
-  { name: 'Seltex', fn: scrapeSeltex, exelova: true }, //+ fast
-  { name: 'Voltag', fn: scrapeVoltag, exelova: true }, //+ fast
-  { name: 'Shtren', fn: scrapeShtren, exelova: true }, // + dandax 5000
-  { name: '74Parts', fn: scrape74Parts, exelova: true }, // + dandax
-  { name: 'istk-deutz', fn: scrapeIstkDeutz, exelova: true }, // + dandax // exelova
-  { name: 'Spb.camsparts', fn: scrapeCamsParts, usePuppeteer: false }, // + fast
-  { name: 'Pcagroup', fn: scrapePcaGroup, usePuppeteer: false }, // + fast
-  { name: 'Imachinery', fn: scrapeIMachinery, usePuppeteer: false }, //+ fast
-  { name: 'Recamgr', fn: scrapeRecamgr, usePuppeteer: false }, // + fast
-  // { name: 'udtTechnika', fn: udtTechnika, usePuppeteer: false ,exelova: true}, // +  dandax
-  // { name: 'Dv-Pt', fn: scrapeDvPt, usePuppeteer: false,exelova: true }, // + dandax
+  // { name: 'Seltex', fn: scrapeSeltex, exelova: true }, //+ fast
+  // { name: 'Voltag', fn: scrapeVoltag, exelova: true }, //+ fast
+  // { name: 'Shtren', fn: scrapeShtren, exelova: true }, // + dandax 5000
+  // { name: '74Parts', fn: scrape74Parts, exelova: true }, // + dandax
+  // { name: 'istk-deutz', fn: scrapeIstkDeutz, exelova: true }, // + dandax // exelova
+  // { name: 'Spb.camsparts', fn: scrapeCamsParts, usePuppeteer: false }, // + fast
+  // { name: 'Pcagroup', fn: scrapePcaGroup, usePuppeteer: false }, // + fast
+  // { name: 'Imachinery', fn: scrapeIMachinery, usePuppeteer: false }, //+ fast
+  // { name: 'Recamgr', fn: scrapeRecamgr, usePuppeteer: false }, // + fast
+  // { name: 'udtTechnika', fn: udtTechnika, usePuppeteer: false, exelova: true }, //++ fast
+  // { name: 'Dv-Pt', fn: scrapeDvPt, usePuppeteer: false, exelova: true }, // + dandax
+  // { name: 'Zipteh', fn: scrapeZipteh, usePuppeteer: false, exelova: true }, // + dandax
   // { name: 'b2b.ixora-auto', fn: scrapeIxora, usePuppeteer: false,exelova: true }, // +
   // { name: 'Intertrek.info', fn: intertrek, usePuppeteer: false }, // + dandax
   // { name: 'Truckdrive', fn: scrapeTruckdrive, usePuppeteer: false,exelova: true }, // + dandax // exelova
-
   // { name: 'Impart', fn: scrapeImpart, usePuppeteer: false ,exelova: true}, // + dandax
   //{ name: 'Truckmir', fn: scrapeTruckmir, usePuppeteer: false,exelova: true }, // shaaaaat dandaxa
 ];

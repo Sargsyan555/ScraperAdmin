@@ -25,6 +25,7 @@ import { ScraperServiceShtren } from './exel/scraperServiceShtern';
 import { ScraperServicePcagroup } from './exel/scraperServicePcagroup';
 import { ScraperRecamgrService } from './exel/recamgr';
 import { ScraperServiceZipteh } from './exel/ScraperServiceZipteh';
+import { ScraperServiceIxora } from './exel/ScraperServiceIxora';
 
 @Module({
   imports: [
@@ -49,19 +50,28 @@ import { ScraperServiceZipteh } from './exel/ScraperServiceZipteh';
     UserHandler,
     UsersService,
     ExcelCacheLoaderService,
-    // ScraperRecamgrService, // chilnum  interestik.info
     // StockService, // slkadna mnace
-    // ScraperService74Parts, // -- chilnum xuyewo xi
+    // ScraperServiceIxora, // ++ done
     // ScraperServiceZipteh, // ++done
-    // ScraperServiceIstkDeutz, // ++done
     // ScraperServiceDvPt, // ++done
-    // ScraperCamspartService, //++ done
-    // ScraperServiceSeltex, //++ done
-    // ScraperServiceShtren, //++ done
-    // ScraperImachineryService, //++ done
-    // ScraperServicePcagroup, //++ done
     // ScraperServiceUdtTechnika, //++ done
+    // ScraperImachineryService, //++ done
+    // ScraperRecamgrService, // chilnum  interestik.info
+    // ScraperServicePcagroup, //++ done
+    // ScraperCamspartService, //++ done
+    // ScraperServiceIstkDeutz, // ++done
+    // ScraperService74Parts, // -- chilnum xuyewo xi
+    // ScraperServiceShtren, //++ done
     // ScraperServiceVoltag, //++ done
+    // ScraperServiceSeltex, //++ done
   ],
 })
 export class TelegramModule {}
+
+// mirdiesel -- datarkaaaa
+// truckdrive -- pizdeca
+// truckmir -- pizdeca u dandax
+
+// intertrek.info ??
+// vipBlumac -- orakan limit uni
+// impart --> proxy
