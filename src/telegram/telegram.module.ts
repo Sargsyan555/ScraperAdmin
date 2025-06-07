@@ -25,6 +25,7 @@ import { ScraperServicePcagroup } from './exel/scraperServicePcagroup';
 import { ScraperRecamgrService } from './exel/ScraperRecamgrService';
 import { ScraperServiceZipteh } from './exel/ScraperServiceZipteh';
 import { ScraperSolidService } from './exel/scraperServiceSolid';
+import { ScraperService74Parts } from './exel/ScraperService74Part';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { ScraperSolidService } from './exel/scraperServiceSolid';
     UsersService,
     ExcelCacheLoaderService,
     // StockService, // slkadna mnace
+    // ScraperService74Parts, // ++ done
     // ScraperServiceIxora, // ++ done
     // ScraperServiceZipteh, // ++done
     // ScraperServiceDvPt, // ++done
@@ -58,7 +60,6 @@ import { ScraperSolidService } from './exel/scraperServiceSolid';
     // ScraperServicePcagroup, //++ done
     // ScraperCamspartService, //++ done
     // ScraperServiceIstkDeutz, // ++done
-    // ScraperService74Parts, // -- chilnum xuyewo xi
     // ScraperServiceShtren, //++ done
     // ScraperServiceVoltag, //++ done
     // ScraperSolidService, //++done
@@ -67,10 +68,11 @@ import { ScraperSolidService } from './exel/scraperServiceSolid';
 })
 export class TelegramModule {}
 
-// mirdiesel -- datarkaaaa
-// truckdrive -- pizdeca
-// truckmir -- pizdeca u dandax
+// mirdiesel -- empty web page
+// truckdrive -- exel chka
+// truckmir -- exel chka u dandaxa
 
-// intertrek.info ??
 // vipBlumac -- orakan limit uni
 // impart --> proxy
+
+// intertrek.info ??

@@ -107,6 +107,7 @@ export type ExcelDataMap = {
   Zipteh: Record<string, ProductData[]>;
   Ixora: Record<string, ProductData[]>;
   Recamgr: Record<string, ProductData[]>;
+  '74Part': Record<string, ProductData[]>;
 };
 
 @Injectable()
@@ -127,6 +128,7 @@ export class ExcelCacheLoaderService implements OnModuleInit {
     Zipteh: {},
     Ixora: {},
     Recamgr: {},
+    '74Part': {},
   };
 
   onModuleInit() {
@@ -145,6 +147,7 @@ export class ExcelCacheLoaderService implements OnModuleInit {
     this.loadZipteh();
     this.loadIxora();
     this.loadRecamgr();
+    this.load74Part();
 
     console.log('✅ All Excel data loaded and cached.');
   }
@@ -176,6 +179,33 @@ export class ExcelCacheLoaderService implements OnModuleInit {
     }
 
     console.log(' ✅ Sklad loaded');
+  }
+
+  private load74Part() {
+    const workbook = XLSX.readFile('src/telegram/scraper/74PartBase.xlsx');
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows: SeventyFourRow[] = XLSX.utils.sheet_to_json(sheet);
+
+    for (const row of rows) {
+      const key = row.article?.trim();
+      if (!key) continue;
+
+      const priceValue = row.price as string | number;
+
+      const product: ProductData = {
+        title: row.title || '-',
+        price:
+          typeof priceValue === 'string'
+            ? parseInt(priceValue.replace(/[^\d]/g, ''), 10) || 0
+            : priceValue || 0,
+        stock: row.availability,
+      };
+
+      if (!this.data['74Part'][key]) this.data['74Part'][key] = [];
+      this.data['74Part'][key].push(product);
+    }
+
+    console.log(this.data['74Part'], '✅ 74Part loaded');
   }
 
   private loadRecamgr() {

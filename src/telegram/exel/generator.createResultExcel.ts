@@ -24,6 +24,9 @@ export function createResultExcelBuffer(rows: ResultRowTest[]): string {
     'istk-deutz',
     'shtern',
     'udtTechnika',
+    'ixora',
+    'zipteh',
+    'recamgr',
   ];
 
   const data = rows.map((row) => {
@@ -48,6 +51,9 @@ export function createResultExcelBuffer(rows: ResultRowTest[]): string {
       formatSuppliers(row['istk-deutz']),
       formatSuppliers(row.shtern),
       formatSuppliers(row.udtTechnika),
+      formatSuppliers(row.zipteh),
+      formatSuppliers(row.ixora),
+      formatSuppliers(row.recamgr),
     ];
   });
   const sheetData = [headers, ...data];

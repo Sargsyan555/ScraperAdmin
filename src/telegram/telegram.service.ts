@@ -45,6 +45,7 @@ type ExcelData = {
   Zipteh: Record<string, ProductData[]>;
   Recamgr: Record<string, ProductData[]>;
   Ixora: Record<string, ProductData[]>;
+  '74Part': Record<string, ProductData[]>;
 };
 @Injectable()
 @Update()
@@ -157,6 +158,7 @@ export class TelegramService {
         Zipteh: data.Zipteh[article] || [],
         Ixora: data.Ixora[article] || [],
         Recamgr: data.Recamgr[article] || [],
+        '74Part': data['74Part'][article] || [],
       };
 
       const validPriceData = filterValidPriceProducts(combinedDataBySource);

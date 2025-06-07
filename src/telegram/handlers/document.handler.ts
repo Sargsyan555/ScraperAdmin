@@ -25,6 +25,7 @@ type ExcelData = {
   Zipteh: Record<string, ProductData[]>;
   Ixora: Record<string, ProductData[]>;
   Recamgr: Record<string, ProductData[]>;
+  '74Part': Record<string, ProductData[]>;
 };
 type ProductData = {
   title: string;
@@ -106,6 +107,7 @@ export class DocumentHandler {
           Zipteh: data.Zipteh[article] || [],
           Ixora: data.Ixora[article] || [],
           Recamgr: data.Recamgr[article] || [],
+          '74Part': data['74Part'][article] || [],
         };
 
         combinedDataBySource = filterValidPriceProducts(combinedDataBySource);
@@ -133,6 +135,7 @@ export class DocumentHandler {
           zipteh: combinedDataBySource.Zipteh,
           ixora: combinedDataBySource.Ixora,
           recamgr: combinedDataBySource.Recamgr,
+          '74Part': combinedDataBySource['74Part'],
         });
       });
       console.log(finalResult);
