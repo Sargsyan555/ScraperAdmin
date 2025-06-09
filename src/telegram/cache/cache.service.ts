@@ -1,5 +1,4 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { readExcelFromYandexDisk } from 'src/telegram/utils/readExcelFromYandexDisk';
 import * as XLSX from 'xlsx';
 
 type ProductData = {
@@ -37,7 +36,9 @@ type SolidRow = {
 
 type SeventyFourRow = {
   article?: string;
+  articule?: string;
   title?: string;
+  stock?: string;
   price?: number | string;
   availability?: string | number;
 };
@@ -152,23 +153,24 @@ export class ExcelCacheLoaderService implements OnModuleInit {
     console.log('✅ All Excel data loaded and cached.');
   }
 
-  private async loadSklad() {
-    const skladItems = await readExcelFromYandexDisk(
-      'https://disk.yandex.ru/i/FE5LjEWujhR0Xg',
-    );
+  private loadSklad() {
+    const workbook = XLSX.readFile('src/telegram/scraper/SkladPrice.xlsx');
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows: SeventyFourRow[] = XLSX.utils.sheet_to_json(sheet);
 
-    for (const row of skladItems) {
-      if (!row['кат.номер']) continue;
-      const key = row['кат.номер'].trim();
+    for (const row of rows) {
+      if (!row.articule) continue;
+      const key = row.articule.trim();
 
-      const priceValue = row['цена, RUB'] as string | number;
+      const priceValue = row.price as string | number;
 
       const product: ProductData = {
-        title: row['название детали'] || '-',
+        title: row.title || '-',
         price:
           typeof priceValue === 'string'
             ? parseInt(priceValue.replace(/[^\d]/g, ''), 10) || 0
             : priceValue || 0,
+        stock: row.stock || '-',
       };
 
       if (!this.data.Sklad[key]) {
@@ -205,7 +207,7 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       this.data['74Part'][key].push(product);
     }
 
-    console.log(this.data['74Part'], '✅ 74Part loaded');
+    console.log('✅ 74Part loaded');
   }
 
   private loadRecamgr() {

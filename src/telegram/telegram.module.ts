@@ -26,6 +26,9 @@ import { ScraperRecamgrService } from './exel/ScraperRecamgrService';
 import { ScraperServiceZipteh } from './exel/ScraperServiceZipteh';
 import { ScraperSolidService } from './exel/scraperServiceSolid';
 import { ScraperService74Parts } from './exel/ScraperService74Part';
+// import { CombineService } from './scraper/combine';
+import { SkladService } from './exel/ScraperServiceSklad';
+import { CombineService } from './scraper/combine';
 
 @Module({
   imports: [
@@ -49,7 +52,8 @@ import { ScraperService74Parts } from './exel/ScraperService74Part';
     UserHandler,
     UsersService,
     ExcelCacheLoaderService,
-    // StockService, // slkadna mnace
+    CombineService,
+    // SkladService, // + done
     // ScraperService74Parts, // ++ done
     // ScraperServiceIxora, // ++ done
     // ScraperServiceZipteh, // ++done
