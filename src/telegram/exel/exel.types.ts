@@ -61,5 +61,5 @@ export type ResultRowTest = {
   zipteh: any[];
   ixora: any[];
   recamgr: any[];
-  '74Part': any[];
+  sevenFour: any[];
 };

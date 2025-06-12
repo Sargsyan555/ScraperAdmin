@@ -29,7 +29,7 @@ export function normalizeInput(input: string): string {
   return input
     .split('')
     .map((char) => map[char] || char) // заменяем похожие русские
-    .filter((char) => /[A-Z0-9/-]/i.test(char))
+    .filter((char) => /[A-Z0-9/.,-]/i.test(char)) // добавлены , и .
     .join('')
     .toUpperCase()
     .trim();

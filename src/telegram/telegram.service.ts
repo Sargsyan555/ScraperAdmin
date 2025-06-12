@@ -50,13 +50,23 @@ type ExcelData = {
   Zipteh: Record<string, ProductData[]>;
   Recamgr: Record<string, ProductData[]>;
   Ixora: Record<string, ProductData[]>;
-  '74Part': Record<string, ProductData[]>;
+  SeventyFour: Record<string, ProductData[]>;
 };
 
 const apiId = 20923704;
 const apiHash = 'a5aadb73db76f05bb76ddd608dc80cbe';
-const stringSessionString = process.env.TG_SESSIO_STRING;
+// const stringSessionString = process.env.TG_SESSIO_STRING;
+const stringSessionString =
+  '1AgAOMTQ5LjE1NC4xNjcuNTABuyBd3Hrg4FvdwLFixO5foMaU/Bcel0h7g1bDCdbWeSLVdjOKZ8e3LHTDp0PEQMqIR+HNbLbZxBPkW9lMCi7ZqSH86gAQSKZo7xWxp/MFNgZE0kza47XLfXw8fgmkIPClQhvzcbNhK7doMLvdfawRoZqg5LnNrZfWI5BzFoTN5B4hmMjr01yFcWEqlvG+NA81kbexBro0GOYm9714BQkqkMpBEUUq6XnOJeBwsAVh3ZDxBEVmR6qpE8qUETyWGzGCUVeMq1jyajfVd/RGm0UyiSzXdQ3jW8moFbsnA5ypjjQQBWA8WMWU35Ja9kTq4LBZle6kLRmp1HNlJXlLyyodYIw=';
 
+async function sendFileWithTimeout(client, entity, fileOptions, timeoutMs) {
+  return Promise.race([
+    client.sendFile(entity, fileOptions),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('sendFile timeout')), timeoutMs),
+    ),
+  ]);
+}
 @Injectable()
 @Update()
 export class TelegramService {
@@ -168,7 +178,7 @@ export class TelegramService {
         Zipteh: data.Zipteh[article] || [],
         Ixora: data.Ixora[article] || [],
         Recamgr: data.Recamgr[article] || [],
-        '74Part': data['74Part'][article] || [],
+        SeventyFour: data.SeventyFour[article] || [],
       };
 
       const validPriceData = filterValidPriceProducts(combinedDataBySource);
@@ -341,66 +351,75 @@ export class TelegramService {
   }
 
   //ւուզում էի պոխեի
-  // @Action('scrape_seltex')
-  // async onScrapPages(@Ctx() ctx: Context) {
-  //   const fileName = 'all-products-price.xlsx';
-  //   const filePath = path.join(__dirname, '../', '../', fileName);
+  //   @Action('scrape_seltex')
+  //   async onScrapPages(@Ctx() ctx: Context) {
+  //     const fileName = 'all-products-price.xlsx';
+  //     const filePath = path.join(__dirname, '../', '../', fileName);
 
-  //   const sessionString = stringSessionString;
-  //   const stringSession = new StringSession(sessionString);
-  //   const userbotClient = new TelegramClient(stringSession, apiId, apiHash, {
-  //     connectionRetries: 5,
-  //   });
+  //     const sessionString = stringSessionString;
+  //     const stringSession = new StringSession(sessionString);
 
-  //   await userbotClient.start({
-  //     phoneNumber: async () => '',
-  //     phoneCode: async () => '',
-  //     onError: (err) => console.error(err),
-  //   });
+  //     const userbotClient = new TelegramClient(stringSession, apiId, apiHash, {
+  //       connectionRetries: 5,
+  //     });
 
-  //   try {
-  //     await ctx.answerCbQuery('Preparing your file...');
+  //     try {
+  //       await ctx.answerCbQuery('⏳ Preparing your file...');
+  //       await userbotClient.connect();
 
-  //     const stats = fs.statSync(filePath);
-  //     const fileSizeInMB = stats.size / (1024 * 1024);
+  //       const stats = fs.statSync(filePath);
+  //       const fileSizeInMB = stats.size / (1024 * 1024);
 
-  //     if (fileSizeInMB > 50) {
-  //       await ctx.reply(
-  //         '❗ The compressed file is too large for Telegram bot, sending via userbot...',
-  //       );
+  //       if (fileSizeInMB > 50) {
+  //         await ctx.reply(
+  //           '⚠️ Файл слишком большой для бота, отправляю через userbot...',
+  //         );
 
-  //       const userId = ctx.from?.id;
-  //       if (!userId) {
-  //         await ctx.reply('❗ Не удалось получить ID пользователя.');
+  //         const userId = ctx.from?.id;
+  //         if (!userId) {
+  //           await ctx.reply('❗ Не удалось получить ID пользователя.');
+  //           return;
+  //         }
+
+  //         const userEntity = await userbotClient.getEntity(userId);
+  //         const stats = fs.statSync(filePath);
+  //         const buffer = fs.readFileSync(filePath);
+
+  //         const uploadedFile = await userbotClient.uploadFile({
+  //   file: {
+  //     name: fileName,
+  //     size: stats.size,
+  //     bytes: async () => new Uint8Array(buffer), // 👈 Ключевая строка
+  //   },
+  //   workers: 8,
+  // });
+
+  //         await userbotClient.sendMessage(userEntity, {
+  //           message: '📦 Ваш файл (отправлено через userbot)',
+  //           file: uploadedFile,
+  //         });
+
+  //         await new Promise((res) => setTimeout(res, 10000)); // пауза 10 сек
+  //         await ctx.reply('✅ Файл отправлен через userbot.');
   //         return;
   //       }
 
-  //       const userEntity = await userbotClient.getEntity(userId);
-
-  //       await userbotClient.sendFile(userEntity, {
-  //         file: filePath,
-  //         caption: 'Ваш большой файл (отправлено через userbot)',
+  //       // Если файл меньше 50МБ — отправляем обычным способом через бота
+  //       await ctx.replyWithDocument({
+  //         source: filePath,
+  //         filename: fileName,
   //       });
-
-  //       await ctx.reply('✅ File sent via userbot.');
-  //       return;
-  //     }
-
-  //     await ctx.replyWithDocument({
-  //       source: filePath,
-  //       filename: 'scraped_data.xlsx',
-  //     });
-  //   } catch (error) {
-  //     console.error('Error:', error.message);
-  //     try {
-  //       await ctx.reply(
-  //         '❗ An error occurred while preparing or sending the file.',
-  //       );
-  //     } catch (e) {
-  //       console.error('Failed to send error message:', e.message);
+  //     } catch (error) {
+  //       console.error('Ошибка при отправке файла:', error.message);
+  //       try {
+  //         await ctx.reply('❗ Произошла ошибка при отправке файла.');
+  //       } catch (e) {
+  //         console.error('Не удалось отправить сообщение об ошибке:', e.message);
+  //       }
+  //     } finally {
+  //       await userbotClient.disconnect();
   //     }
   //   }
-  // }
 
   @Action('all_users')
   async onAllUsers(@Ctx() ctx: Context) {

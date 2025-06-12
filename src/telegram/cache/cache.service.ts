@@ -108,8 +108,34 @@ export type ExcelDataMap = {
   Zipteh: Record<string, ProductData[]>;
   Ixora: Record<string, ProductData[]>;
   Recamgr: Record<string, ProductData[]>;
-  '74Part': Record<string, ProductData[]>;
 };
+
+function parsePrice(priceValue: string | number | undefined): number {
+  if (typeof priceValue === 'number') return priceValue;
+
+  if (typeof priceValue === 'string') {
+    let priceStr = priceValue.trim();
+
+    // Удаляем все символы, кроме цифр, точек и запятых
+    priceStr = priceStr.replace(/[^0-9.,]/g, '');
+
+    // Если есть и точка и запятая
+    if (priceStr.includes('.') && priceStr.includes(',')) {
+      // Точка — тысячный разделитель, удаляем её
+      // Запятая — десятичный, заменяем на точку
+      priceStr = priceStr.replace(/\./g, '').replace(',', '.');
+    } else if (priceStr.includes(',')) {
+      // Если есть только запятая — считаем её десятичной и заменяем на точку
+      priceStr = priceStr.replace(',', '.');
+    }
+    // Если есть только точка — оставляем как есть
+
+    const parsed = parseFloat(priceStr);
+    return isNaN(parsed) ? 0 : parsed;
+  }
+
+  return 0;
+}
 
 @Injectable()
 export class ExcelCacheLoaderService implements OnModuleInit {
@@ -129,7 +155,6 @@ export class ExcelCacheLoaderService implements OnModuleInit {
     Zipteh: {},
     Ixora: {},
     Recamgr: {},
-    '74Part': {},
   };
 
   onModuleInit() {
@@ -148,7 +173,6 @@ export class ExcelCacheLoaderService implements OnModuleInit {
     this.loadZipteh();
     this.loadIxora();
     this.loadRecamgr();
-    // this.load74Part();
     this.exportToExcel();
     console.log('✅ All Excel data loaded and cached.');
   }
@@ -162,14 +186,11 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       if (!row.articule) continue;
       const key = row.articule.trim();
 
-      const priceValue = row.price as string | number;
+      const price = parsePrice(row.price);
 
       const product: ProductData = {
         title: row.title || '-',
-        price:
-          typeof priceValue === 'string'
-            ? parseInt(priceValue.replace(/[^\d]/g, ''), 10) || 0
-            : priceValue || 0,
+        price,
         stock: row.stock || '-',
       };
 
@@ -183,33 +204,6 @@ export class ExcelCacheLoaderService implements OnModuleInit {
     console.log(' ✅ Sklad loaded');
   }
 
-  private load74Part() {
-    const workbook = XLSX.readFile('src/telegram/scraper/74PartBase.xlsx');
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const rows: SeventyFourRow[] = XLSX.utils.sheet_to_json(sheet);
-
-    for (const row of rows) {
-      const key = row.article?.trim();
-      if (!key) continue;
-
-      const priceValue = row.price as string | number;
-
-      const product: ProductData = {
-        title: row.title || '-',
-        price:
-          typeof priceValue === 'string'
-            ? parseInt(priceValue.replace(/[^\d]/g, ''), 10) || 0
-            : priceValue || 0,
-        stock: row.availability,
-      };
-
-      if (!this.data['74Part'][key]) this.data['74Part'][key] = [];
-      this.data['74Part'][key].push(product);
-    }
-
-    console.log('✅ 74Part loaded');
-  }
-
   private loadRecamgr() {
     const workbook = XLSX.readFile('src/telegram/scraper/RecamgrPrice.xlsx');
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -219,14 +213,11 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       const key = row.articul?.trim();
       if (!key) continue;
 
-      const priceValue = row.price as string | number;
+      const price = parsePrice(row.price);
 
       const product: ProductData = {
         title: row.title || '-',
-        price:
-          typeof priceValue === 'string'
-            ? parseInt(priceValue.replace(/[^\d]/g, ''), 10) || 0
-            : priceValue || 0,
+        price,
         brand: row.brand || '-',
       };
 
@@ -246,14 +237,11 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       const key = row.artikul?.trim();
       if (!key) continue;
 
-      const priceValue = row.price as string | number;
+      const price = parsePrice(row.price);
 
       const product: ProductData = {
         title: row.title || '-',
-        price:
-          typeof priceValue === 'string'
-            ? parseInt(priceValue.replace(/[^\d]/g, ''), 10) || 0
-            : priceValue || 0,
+        price,
         brand: row.brand || '-',
       };
 
@@ -273,14 +261,11 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       const key = row.articul?.trim();
       if (!key) continue;
 
-      const priceValue = row.price as string | number;
+      const price = parsePrice(row.price);
 
       const product: ProductData = {
         title: row.title || '-',
-        price:
-          typeof priceValue === 'string'
-            ? parseInt(priceValue.replace(/[^\d]/g, ''), 10) || 0
-            : priceValue || 0,
+        price,
         brand: row.brand || '-',
       };
 
@@ -300,12 +285,11 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       const key = row.Article?.trim();
       if (!key) continue;
 
+      const price = parsePrice(row.Price);
+
       const product: ProductData = {
         title: row.Name || '-',
-        price:
-          typeof row.Price === 'string'
-            ? parseInt(row.Price.replace(/[^\d]/g, ''), 10) || 0
-            : row.Price || 0,
+        price,
         stock: row.availability || '-',
         brand: row.Brand || '-',
       };
@@ -331,12 +315,11 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       if (!row.Articul) continue;
       const key = row.Articul.trim();
 
+      const price = parsePrice(row.Price);
+
       const product: ProductData = {
         title: row.Name || '-',
-        price:
-          typeof row.Price === 'string'
-            ? parseInt(row.Price.replace(/[^\d]/g, ''), 10) || 0
-            : row.Price || 0,
+        price,
         brand: row.Brand || '-',
       };
 
@@ -359,12 +342,11 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       const key = row.articul?.trim();
       if (!key) continue;
 
+      const price = parsePrice(row.price);
+
       const product: ProductData = {
         title: row.name || '-',
-        price:
-          typeof row.price === 'string'
-            ? parseInt(row.price.replace(/[^\d]/g, ''), 10) || 0
-            : row.price || 0,
+        price,
         stock: row.stock || '-',
         brand: row.brand || '-',
       };
@@ -391,12 +373,11 @@ export class ExcelCacheLoaderService implements OnModuleInit {
         .map((k) => k.trim())
         .filter(Boolean);
 
+      const price = parsePrice(row.price);
+
       const product: ProductData = {
         title: row.title || '-',
-        price:
-          typeof row.price === 'string'
-            ? parseInt(row.price.replace(/[^\d]/g, ''), 10) || 0
-            : row.price || 0,
+        price,
         stock: row.availability || '-',
         //ToDo add brand
       };
@@ -419,12 +400,11 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       const key = row.articul?.trim();
       if (!key) continue;
 
+      const price = parsePrice(row.price);
+
       const product: ProductData = {
         title: row.title || '-',
-        price:
-          typeof row.price === 'string'
-            ? parseInt(row.price.replace(/[^\d]/g, ''), 10) || 0
-            : row.price || 0,
+        price,
         stock: row.stock || '-',
       };
 
@@ -434,6 +414,7 @@ export class ExcelCacheLoaderService implements OnModuleInit {
 
     console.log('✅ IstkDeutz loaded');
   }
+
   private loadVoltag() {
     const workbook = XLSX.readFile('src/telegram/scraper/voltag.xlsx');
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -448,12 +429,11 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       if (!row.article) continue;
       const key = row.article.trim();
 
+      const price = parsePrice(row.price);
+
       const product: ProductData = {
         title: row.name || '-',
-        price:
-          typeof row.price === 'string'
-            ? parseInt(row.price.replace(/[^\d]/g, ''), 10) || 0
-            : row.price || 0,
+        price,
         brand: row.brand || '-',
         stock: '-',
       };
@@ -476,12 +456,11 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       if (!row['Артикул']) continue;
       const key = row['Артикул'].trim();
 
+      const price = parsePrice(row['Цена']);
+
       const product: ProductData = {
         title: row['Название'] || '-',
-        price:
-          typeof row['Цена'] === 'string'
-            ? parseInt(row['Цена'].replace(/[^\d]/g, ''), 10) || 0
-            : row['Цена'] || 0,
+        price,
         brand: row['Производитель'] || '-',
         stock: '-',
       };
@@ -511,12 +490,11 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       if (!row.Articule) continue;
       const key = row.Articule.trim();
 
+      const price = parsePrice(row.Price);
+
       const product: ProductData = {
         title: row.Name || '-',
-        price:
-          typeof row.Price === 'string'
-            ? parseInt(row.Price.replace(/[^\d]/g, ''), 10) || 0
-            : row.Price || 0,
+        price,
         brand: row.Brand || '-',
       };
 
@@ -542,12 +520,11 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       if (!row.article) continue;
       const key = row.article.trim();
 
+      const price = parsePrice(row.price);
+
       const product: ProductData = {
         title: row.title || '-',
-        price:
-          typeof row.price === 'string'
-            ? parseInt(row.price.replace(/[^\d]/g, ''), 10) || 0
-            : row.price || 0,
+        price,
       };
 
       if (!this.data.Dvpt[key]) {
@@ -573,12 +550,11 @@ export class ExcelCacheLoaderService implements OnModuleInit {
       if (!row.Articul) continue;
       const key = row.Articul.trim();
 
+      const price = parsePrice(row.Price);
+
       const product: ProductData = {
         title: row.Name || '-',
-        price:
-          typeof row.Price === 'string'
-            ? parseInt(row.Price.replace(/[^\d]/g, ''), 10) || 0
-            : row.Price || 0,
+        price,
         brand: row.Brand || '-',
       };
 
@@ -605,13 +581,11 @@ export class ExcelCacheLoaderService implements OnModuleInit {
     for (const row of rows) {
       if (!row.Articule) continue;
       const key = row.Articule.trim();
+      const price = parsePrice(row.Price);
 
       const product: ProductData = {
         title: row.Name || '-',
-        price:
-          typeof row.Price === 'string'
-            ? parseInt(row.Price.replace(/[^\d]/g, ''), 10) || 0
-            : row.Price || 0,
+        price,
         brand: row.Brand || '-',
       };
 
