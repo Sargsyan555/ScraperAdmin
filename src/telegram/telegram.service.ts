@@ -21,6 +21,12 @@ import { createReadStream, existsSync } from 'fs';
 import { join } from 'path';
 import { ExcelCacheLoaderService } from './cache/cache.service';
 import { normalizeInput } from './utils/validator';
+import * as path from 'path';
+import * as fs from 'fs';
+import * as archiver from 'archiver';
+import * as XLSX from 'xlsx';
+import { TelegramClient } from 'telegram';
+import { StringSession } from 'telegram/sessions';
 
 type ProductData = {
   title: string;
@@ -33,7 +39,6 @@ type ExcelData = {
   Sklad: Record<string, ProductData[]>;
   Solid: Record<string, ProductData[]>;
   Seltex: Record<string, ProductData[]>;
-  SeventyFour: Record<string, ProductData[]>;
   IstkDeutz: Record<string, ProductData[]>;
   Voltag: Record<string, ProductData[]>;
   Shtren: Record<string, ProductData[]>;
@@ -47,6 +52,11 @@ type ExcelData = {
   Ixora: Record<string, ProductData[]>;
   '74Part': Record<string, ProductData[]>;
 };
+
+const apiId = 20923704;
+const apiHash = 'a5aadb73db76f05bb76ddd608dc80cbe';
+const stringSessionString = process.env.TG_SESSIO_STRING;
+
 @Injectable()
 @Update()
 export class TelegramService {
@@ -106,8 +116,9 @@ export class TelegramService {
       if (parts.length === 3) {
         [artikul, qtyStr, brand] = parts;
         const num = Number(qtyStr);
-        if (!isNaN(num) && isFinite(num) && num > 0) {
+        if (isNaN(num) && isFinite(num) && num > 0) {
           await ctx.reply('❌ Неверный формат. Пример: 1979322, 1, CAT');
+          return;
         }
       } else if (parts.length === 2) {
         let second: string;
@@ -146,7 +157,6 @@ export class TelegramService {
         Sklad: data.Sklad[article] || [],
         Solid: data.Solid[article] || [],
         Seltex: data.Seltex[article] || [],
-        SeventyFour: data.SeventyFour[article] || [],
         IstkDeutz: data.IstkDeutz[article] || [],
         Voltag: data.Voltag[article] || [],
         Shtren: data.Shtren[article] || [],
@@ -268,31 +278,130 @@ export class TelegramService {
     await ctx.reply('Пожалуйста, введите Username(James123)  пользователя.');
   }
 
+  @Action('scrape_seltex')
+  async onScrapPages(@Ctx() ctx: Context) {
+    try {
+      await ctx.answerCbQuery('Preparing your file...');
+
+      const originalFilePath = path.join(
+        __dirname,
+        '..',
+        '..',
+        'all-products-price.xlsx',
+      );
+
+      const zipFilePath = path.join(
+        __dirname,
+        '..',
+        '..',
+        'all-products-price.zip',
+      );
+
+      // Проверка: существует ли исходный файл
+      if (!fs.existsSync(originalFilePath)) {
+        await ctx.reply('File not found.');
+        return;
+      }
+
+      // Создание архива .zip
+      await new Promise<void>((resolve, reject) => {
+        const output = fs.createWriteStream(zipFilePath);
+        const archive = archiver('zip', {
+          zlib: { level: 9 },
+        });
+
+        output.on('close', () => {
+          console.log(`Zip created: ${archive.pointer()} total bytes`);
+          resolve();
+        });
+
+        archive.on('error', (err) => {
+          console.error('Archiver error:', err);
+          reject(err);
+        });
+
+        archive.pipe(output);
+        archive.file(originalFilePath, { name: 'all-products-price.xlsx' });
+        archive.finalize();
+      });
+
+      // Отправка архива пользователю
+      await ctx.replyWithDocument({
+        source: zipFilePath,
+        filename: 'all-products-price.zip',
+      });
+    } catch (error) {
+      console.error('Error:', error.message);
+      try {
+        await ctx.reply('An error occurred while preparing the file.');
+      } catch (e) {
+        console.error('Failed to send error message:', e.message);
+      }
+    }
+  }
+
+  //ւուզում էի պոխեի
   // @Action('scrape_seltex')
   // async onScrapPages(@Ctx() ctx: Context) {
+  //   const fileName = 'all-products-price.xlsx';
+  //   const filePath = path.join(__dirname, '../', '../', fileName);
+
+  //   const sessionString = stringSessionString;
+  //   const stringSession = new StringSession(sessionString);
+  //   const userbotClient = new TelegramClient(stringSession, apiId, apiHash, {
+  //     connectionRetries: 5,
+  //   });
+
+  //   await userbotClient.start({
+  //     phoneNumber: async () => '',
+  //     phoneCode: async () => '',
+  //     onError: (err) => console.error(err),
+  //   });
+
   //   try {
-  //     await ctx.answerCbQuery('Starting to scrape pages...');
+  //     await ctx.answerCbQuery('Preparing your file...');
 
-  //     const filepath = await this.camspart.scrapeAndExport();
-  //     console.log(filepath);
+  //     const stats = fs.statSync(filePath);
+  //     const fileSizeInMB = stats.size / (1024 * 1024);
 
-  //     // await ctx.reply(`✅ Scraped ${products.length} products successfully.`);
+  //     if (fileSizeInMB > 50) {
+  //       await ctx.reply(
+  //         '❗ The compressed file is too large for Telegram bot, sending via userbot...',
+  //       );
 
-  //     // ✅ Send the Excel file
+  //       const userId = ctx.from?.id;
+  //       if (!userId) {
+  //         await ctx.reply('❗ Не удалось получить ID пользователя.');
+  //         return;
+  //       }
+
+  //       const userEntity = await userbotClient.getEntity(userId);
+
+  //       await userbotClient.sendFile(userEntity, {
+  //         file: filePath,
+  //         caption: 'Ваш большой файл (отправлено через userbot)',
+  //       });
+
+  //       await ctx.reply('✅ File sent via userbot.');
+  //       return;
+  //     }
+
   //     await ctx.replyWithDocument({
-  //       source: filepath,
-  //       // filename: 'seltex-products.xlsx',
+  //       source: filePath,
+  //       filename: 'scraped_data.xlsx',
   //     });
   //   } catch (error) {
-  //     console.error('Error during scraping:', error.message);
-
+  //     console.error('Error:', error.message);
   //     try {
-  //       await ctx.reply('❌ An error occurred during scraping.');
+  //       await ctx.reply(
+  //         '❗ An error occurred while preparing or sending the file.',
+  //       );
   //     } catch (e) {
-  //       console.error('Failed to send reply:', e.message);
+  //       console.error('Failed to send error message:', e.message);
   //     }
   //   }
   // }
+
   @Action('all_users')
   async onAllUsers(@Ctx() ctx: Context) {
     await this.userHandler.handle(ctx);

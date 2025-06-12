@@ -50,7 +50,6 @@ export type ResultRowTest = {
   sklad: any[];
   seltex: any[];
   'solid-t': any[];
-  '74parts': any[];
   pcagroup: any[];
   'spb.camsparts': any[];
   dvpt: any[];

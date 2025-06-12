@@ -152,10 +152,6 @@ export class CrawlerService {
       const collector: ProductInfo[] = [];
       let s = 0;
       for (const link of secondLevelLinks) {
-        s = s + 1;
-        if (s === 5) {
-          break;
-        }
         console.log(`➡ Visiting second-level page: ${link}`);
         await this.extractThirdLevelLinks(link, collector);
       }

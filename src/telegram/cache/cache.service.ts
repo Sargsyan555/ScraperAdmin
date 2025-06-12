@@ -148,8 +148,8 @@ export class ExcelCacheLoaderService implements OnModuleInit {
     this.loadZipteh();
     this.loadIxora();
     this.loadRecamgr();
-    this.load74Part();
-
+    // this.load74Part();
+    this.exportToExcel();
     console.log('✅ All Excel data loaded and cached.');
   }
 
@@ -626,5 +626,92 @@ export class ExcelCacheLoaderService implements OnModuleInit {
   }
   public getExcelData(): ExcelDataMap {
     return this.data;
+  }
+  // private exportToExcel() {
+  //   const allStores = Object.keys(this.data) as (keyof ExcelDataMap)[];
+  //   const allKeysSet = new Set<string>();
+
+  //   // Collect all unique articuls
+  //   for (const store of allStores) {
+  //     for (const articul of Object.keys(this.data[store])) {
+  //       allKeysSet.add(articul);
+  //     }
+  //   }
+
+  //   const allArticuls = Array.from(allKeysSet);
+  //   const exportData: any[] = [];
+
+  //   for (const articul of allArticuls) {
+  //     const row: any = { Articul: articul };
+
+  //     for (const store of allStores) {
+  //       const productList = this.data[store][articul];
+  //       if (productList && productList.length > 0) {
+  //         row[store] = productList[0].price;
+  //       } else {
+  //         row[store] = ''; // No product for this articul in this store
+  //       }
+  //     }
+
+  //     exportData.push(row);
+  //   }
+
+  //   // Create worksheet and workbook
+  //   const worksheet = XLSX.utils.json_to_sheet(exportData);
+  //   const workbook = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(workbook, worksheet, 'Prices');
+
+  //   // Write to file
+  //   XLSX.writeFile(workbook, 'all-products-price.xlsx');
+  //   console.log('✅ Excel file exported!');
+  // }
+  private exportToExcel() {
+    const allStores = Object.keys(this.data) as (keyof ExcelDataMap)[];
+    const rows: any[] = [];
+
+    // Map to track already seen (articul, brand) combinations
+    const seen = new Map<string, any>();
+
+    for (const store of allStores) {
+      const storeData = this.data[store];
+
+      for (const articul of Object.keys(storeData)) {
+        const productList = storeData[articul];
+
+        for (const product of productList) {
+          const brand = product.brand || '';
+          const title = product.title || '';
+          const key = `${articul}::${brand}`;
+
+          if (!seen.has(key)) {
+            // Initial row
+            seen.set(key, {
+              Articul: articul,
+              Brand: brand,
+              Title: title,
+            });
+          }
+
+          const row = seen.get(key);
+          row[store] = product.price; // Only first matching product per store
+        }
+      }
+    }
+
+    // Convert to array and sort by Articul (as string or number)
+    const exportData = Array.from(seen.values()).sort((a, b) => {
+      if (a.Articul < b.Articul) return -1;
+      if (a.Articul > b.Articul) return 1;
+      return 0;
+    });
+
+    // Create worksheet and workbook
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Prices');
+
+    // Write to file
+    XLSX.writeFile(workbook, 'all-products-price.xlsx');
+    console.log('✅ Excel file exported!');
   }
 }

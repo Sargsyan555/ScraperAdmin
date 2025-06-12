@@ -13,7 +13,6 @@ type ExcelData = {
   Sklad: Record<string, ProductData[]>;
   Solid: Record<string, ProductData[]>;
   Seltex: Record<string, ProductData[]>;
-  SeventyFour: Record<string, ProductData[]>;
   IstkDeutz: Record<string, ProductData[]>;
   Voltag: Record<string, ProductData[]>;
   Shtren: Record<string, ProductData[]>;
@@ -95,7 +94,6 @@ export class DocumentHandler {
           Sklad: data.Sklad[article] || [],
           Solid: data.Solid[article] || [],
           Seltex: data.Seltex[article] || [],
-          SeventyFour: data.SeventyFour[article] || [],
           IstkDeutz: data.IstkDeutz[article] || [],
           Voltag: data.Voltag[article] || [],
           Shtren: data.Shtren[article] || [],
@@ -122,7 +120,6 @@ export class DocumentHandler {
           luchshiyPostavshik: best?.shop,
           sklad: combinedDataBySource.Sklad,
           'solid-t': combinedDataBySource.Solid,
-          '74parts': combinedDataBySource.SeventyFour,
           pcagroup: combinedDataBySource.Pcagroup,
           'spb.camsparts': combinedDataBySource.Camspart,
           shtern: combinedDataBySource.Shtren,

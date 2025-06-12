@@ -28,7 +28,7 @@ import { ScraperSolidService } from './exel/scraperServiceSolid';
 import { ScraperService74Parts } from './exel/ScraperService74Part';
 // import { CombineService } from './scraper/combine';
 import { SkladService } from './exel/ScraperServiceSklad';
-import { CombineService } from './scraper/combine';
+// import { CombineService } from './scraper/combine';
 
 @Module({
   imports: [
@@ -52,7 +52,7 @@ import { CombineService } from './scraper/combine';
     UserHandler,
     UsersService,
     ExcelCacheLoaderService,
-    CombineService,
+    // CombineService,
     // SkladService, // + done
     // ScraperService74Parts, // ++ done
     // ScraperServiceIxora, // ++ done
